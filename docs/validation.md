@@ -2,7 +2,7 @@
 
 Environment: Linux x86-64, Python 3.12.14, PySide6 6.10.2, pyqtgraph 0.14.0, Phoenix 26.3.0. Date: 2026-10-16.
 
-Current source validation: **71 tests passed**, including the real vendor simulation integration suite; Ruff lint and formatting checks passed.
+Current source validation: **74 tests passed**, including the real vendor simulation integration suite; Ruff lint and formatting checks passed.
 
 The automated suite exercises the real CTRE SDK with `CTR_TARGET=Simulation`. No physical CAN interfaces or CANivore USB adapter were present on the development machine. No physical motor behavior has been validated.
 
@@ -31,6 +31,8 @@ Other automated checks cover malformed server responses, HTTP-success/device-err
 The actual Qt UI was rendered with Qt's offscreen platform against the vendor simulation. Screenshots in [images](images/) show live simulation data from the app, not mockups.
 
 `tools/build.py` successfully produced the Linux onedir bundle. `tools/smoke_bundle.py` launched the frozen GUI with `--simulate`, confirmed that its bundled SDK subprocess enumerated eight simulated devices, and read configuration, self-test and control metadata, and acquired buffered plot records through that subprocess. The source GUI and frozen GUI were both exercised.
+
+The bundle smoke test uses a short 500 ms request timeout only while probing startup, then restores the application's normal 3 s timeout for device transactions. Previously the short probe timeout also applied to configuration reads, causing intermittent macOS bundle failures after source tests passed. Regression checks verify timeout restoration on discovery success, startup deadline expiry, and process exit. The smoke test prints captured GUI output on failure; device transactions are not automatically retried.
 
 GitHub Actions verified source tests and desktop builds on Windows and macOS 14 (Apple Silicon), plus Linux and an Arch makepkg job. macOS CI now pins the supported Python 3.12.14 runtime. Its control watchdog test reads a single status signal rather than a slow full self-test, waits for asynchronous telemetry within a deadline, and keeps enable feeds active when verifying independent request expiry and Stop. No macOS simulation tests are disabled. SDK process/loop diagnostics are attached to failed integration tests. Linux builds report optional pyqtgraph OpenGL and TIFF image-plugin dependency warnings; the app uses a 2D plot and SVG/PNG assets. Those optional features are not used.
 

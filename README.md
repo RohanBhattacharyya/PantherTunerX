@@ -2,7 +2,7 @@
 
 **A cross-platform desktop workbench for CTRE Phoenix 6 devices.**
 
-[![Build](https://github.com/RohanBhattacharyya/PantherTunerX/actions/workflows/ci.yml/badge.svg)](https://github.com/RohanBhattacharyya/PantherTunerX/actions/workflows/ci.yml)
+[![Build](https://github.com/RohanBhattacharyya/PantherTunerX/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/RohanBhattacharyya/PantherTunerX/actions/workflows/ci.yml?query=branch%3Amain)
 [![License: MIT](https://img.shields.io/badge/source-MIT-f3e6a4)](LICENSE)
 ![Platforms](https://img.shields.io/badge/platforms-Linux%20%C2%B7%20Windows%20%C2%B7%20macOS-303036)
 

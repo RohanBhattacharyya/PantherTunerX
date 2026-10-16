@@ -25,6 +25,7 @@ def main():
     app = QApplication(sys.argv[:1])
     app.setApplicationName("Panther Tuner X")
     app.setOrganizationName("PantherBotics")
+    app.setDesktopFileName("panther-tuner-x")
     app.setStyle("Fusion")
     app.setFont(QFont("Sans Serif", 10))
     app.setStyleSheet(STYLE)

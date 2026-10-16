@@ -134,11 +134,13 @@ def test_vendor_control_output_and_two_independent_watchdogs(simulation):
     params = {
         f["Name"]: False if f["Type"] == "bool" else 0.1 for f in catalog["DutyCycleOut"]["ConstructorParams"]
     }
+    duty_id = next(s.id for s in simulation.signals(device) if s.name == "DutyCycle")
 
     def duty():
-        return float(
-            next(s["Value"] for s in simulation.self_test(device)["signals"] if s["name"] == "DutyCycle")
-        )
+        # A full self-test can take longer than the 250 ms enable lease on macOS.
+        # Read just this signal so the assertion doesn't itself expire the
+        # watchdog being tested; the GUI uses the same point-read path in tests.
+        return simulation.sample(device, [duty_id]).values[duty_id]
 
     try:
         with pytest.raises(TunerError, match="explicit"):

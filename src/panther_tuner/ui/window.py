@@ -2,7 +2,6 @@
 
 import copy
 import json
-import time
 from datetime import datetime
 
 from PySide6.QtCore import QSettings, Qt, QTimer, QUrl, Slot
@@ -39,6 +38,7 @@ from ..models import TunerError
 from .common import button, fill_table, label, table
 from .config_editor import ConfigEditor
 from .control_panel import ControlPanel
+from .heartbeat import ControlHeartbeat
 from .icons import device_picture, icon, tool
 from .plotter import Plotter
 from .worker import Worker
@@ -52,8 +52,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(1040, 720)
         self.control_token = 0
         self.active_control = None
-        self.pending_control = False
-        self.control_last_ack = 0.0
+        self.heartbeats = set()
         self.backend = None
         self._pending_backend = None
         self._closing = False
@@ -290,77 +289,65 @@ class MainWindow(QMainWindow):
         except TunerError as e:
             QMessageBox.warning(self, "Invalid control request", str(e))
             return
-        self.active_control = (self.backend, self.device, mode, values, self.control_token)
-        self.control_last_ack = time.monotonic()
-        self.control_tick()
+        if self.active_control:
+            self.active_control.update(mode, values)
+            return
+        backend, device = self.backend, self.device
+        renew = backend.enable_lease if isinstance(backend, LocalBackend) else None
+        heartbeat = ControlHeartbeat(backend, device, mode, values, renew, self)
+        heartbeat.acknowledged.connect(self.control_acknowledged)
+        heartbeat.lapsed.connect(self.control_lapsed)
+        heartbeat.ended.connect(self.control_ended)
+        self.active_control = heartbeat
+        self.heartbeats.add(heartbeat)
+        heartbeat.start()
 
     def control_tick(self):
+        """Feed the GUI liveness deadline; requests are sent by the heartbeat thread."""
         if not self.active_control:
-            return
-        if time.monotonic() - self.control_last_ack > 0.3:
-            self.stop_controls()
-            self.control_panel.note.setText(
-                "CONTROL STOPPED: heartbeat stalled. Enable and Apply again to resume."
-            )
-            return
-        if self.pending_control:
             return
         if self.pages.currentIndex() != 1 or self.left_tabs.currentIndex() != 1:
             self.stop_controls()
             return
-        backend, device, mode, values, token = self.active_control
-        self.pending_control = True
-        requested_at = time.monotonic()
+        self.active_control.feed()
 
-        def send():
-            if token != self.control_token:
-                return
-            if time.monotonic() - requested_at > 0.25:
-                raise TunerError("Queued control request expired")
-            result = backend.control(device, mode, values, confirmed=True)
-            if time.monotonic() - requested_at > 0.25:
-                raise TunerError("Control request exceeded its heartbeat deadline")
-            if token == self.control_token and isinstance(backend, LocalBackend):
-                backend.enable_lease(True)
-            return result
+    def control_acknowledged(self, heartbeat, mode):
+        if heartbeat is self.active_control:
+            self.control_panel.note.setText(
+                f"{mode} acknowledged · heartbeat active. Enable/limits may inhibit output; inspect telemetry."
+            )
 
-        def done(result, error):
-            self.pending_control = False
-            if token != self.control_token:
-                return
-            if time.monotonic() - requested_at > 0.3:
-                error = TunerError(
-                    "Control heartbeat stalled; explicit Enable and Apply are required to resume"
-                )
+    def control_lapsed(self, heartbeat, gap):
+        if heartbeat is self.active_control:
+            message = (
+                f"Control heartbeat gap of {gap * 1000:.0f} ms: "
+                "the robot program may have briefly reclaimed output"
+            )
+            self.log_event(message)
+            self.control_panel.note.setText(message + ". Heartbeat resumed.")
+
+    def control_ended(self, heartbeat, error, stop_error):
+        self.heartbeats.discard(heartbeat)
+        if stop_error:
+            self.log_event("Stop request failed; control heartbeat is stopped: " + stop_error)
+        else:
+            self.log_event("Control stopped")
+        if heartbeat is self.active_control:
+            self.stop_controls()
             if error:
-                self.stop_controls()
-                self.log_event("Control stopped: " + str(error))
-                self.control_panel.note.setText("CONTROL STOPPED: " + str(error))
-            else:
-                self.control_last_ack = time.monotonic()
-                self.control_panel.note.setText(
-                    f"{mode} acknowledged · heartbeat active. Enable/limits may inhibit output; inspect telemetry."
-                )
-
-        self.worker.submit(send, done)
+                self.log_event("Control stopped: " + error)
+                self.control_panel.note.setText("CONTROL STOPPED: " + error)
 
     def stop_controls(self):
-        active = self.active_control
+        heartbeat = self.active_control
         self.control_token += 1
         self.active_control = None
         self.control_panel.set_armed(False)
+        if heartbeat:
+            # The heartbeat thread sends Stop after its last control request.
+            heartbeat.stop()
         if isinstance(self.backend, LocalBackend):
             self.backend.enable_lease(False)
-        if active:
-            backend, device = active[:2]
-
-            def stopped(result, error):
-                if error:
-                    self.log_event("Stop request failed; control heartbeat is stopped: " + str(error))
-                else:
-                    self.log_event("Control stopped")
-
-            self.worker.submit(lambda: backend.stop_control(device), stopped)
 
     def plot_pause_changed(self, paused):
         if paused and self.backend and self.device:
@@ -1211,17 +1198,18 @@ class MainWindow(QMainWindow):
         self.poll_timer.stop()
         self.discovery_timer.stop()
         self.control_timer.stop()
-        closing_control = self.active_control
         self.stop_controls()
         self._closing = True
+        # Each heartbeat sends its Stop before the backend (or SDK host) closes.
+        for heartbeat in list(self.heartbeats):
+            while not heartbeat.wait(20):
+                QApplication.processEvents()
 
         def cleanup():
             for backend in [self.backend, self._pending_backend]:
                 if backend:
                     if self.device:
                         try:
-                            if closing_control and closing_control[0] is backend:
-                                backend.stop_control(closing_control[1])
                             backend.stop_plot(self.device)
                         except Exception:
                             pass

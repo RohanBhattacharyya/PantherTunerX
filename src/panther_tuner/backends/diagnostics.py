@@ -15,6 +15,8 @@ from ..controls import encode_control
 from ..models import Device, DeviceError, PlotBatch, Sample, Signal, TunerError
 from ..protocol import checked_response, encode_payload
 
+CONTROL_TIMEOUT = 0.25
+
 
 class DiagnosticsBackend:
     def __init__(
@@ -154,6 +156,20 @@ class DiagnosticsBackend:
             raise TunerError("Refresh the device's control requests first")
         params = encode_control(catalog, mode, values)
         return self.request("controlv2", device, controlmode=mode, controlen="true", **params)
+
+    def control_channel(self) -> "DiagnosticsBackend":
+        """A separate connection, so control requests never wait behind other I/O."""
+        channel = DiagnosticsBackend(
+            client=httpx.Client(
+                base_url=self.client.base_url,
+                timeout=CONTROL_TIMEOUT,
+                trust_env=False,
+                follow_redirects=False,
+            )
+        )
+        channel.control_catalogs = dict(self.control_catalogs)
+        channel.simulated = self.simulated
+        return channel
 
     def stop_control(self, device: Device):
         return self.request("controlv2", device, controlmode="NeutralOut", controlen="false")

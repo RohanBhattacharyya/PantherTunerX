@@ -10,6 +10,7 @@ import socket
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from pathlib import Path
 
@@ -27,6 +28,8 @@ class LocalBackend(DiagnosticsBackend):
         self.process = None
         self.log = None
         self.lease_socket = None
+        # The control heartbeat thread renews while the GUI thread may revoke.
+        self.lease_lock = threading.Lock()
 
     def connect(self):
         # Do not silently attach to an existing server: it might be real hardware.
@@ -90,6 +93,10 @@ class LocalBackend(DiagnosticsBackend):
         raise TunerError("Phoenix SDK server did not start within 8 seconds")
 
     def enable_lease(self, enabled):
+        with self.lease_lock:
+            self._send_lease(enabled)
+
+    def _send_lease(self, enabled):
         if self.process and self.process.poll() is None and self.lease_socket:
             try:
                 command = f"enable {time.monotonic() + 0.25:.9f}\n" if enabled else "disable\n"

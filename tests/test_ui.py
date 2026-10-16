@@ -200,6 +200,130 @@ def test_stalled_control_request_stops_and_requires_rearming(qtbot):
     w.close()
 
 
+class RecordingControlBackend:
+    """Records control traffic with arrival times; no HTTP channel of its own."""
+
+    def __init__(self):
+        import threading
+
+        self.calls = []
+        self.lock = threading.Lock()
+
+    def assert_target(self, device):
+        pass
+
+    def control(self, device, mode, values, *, confirmed=False):
+        import time
+
+        assert confirmed
+        with self.lock:
+            self.calls.append((time.monotonic(), mode, values.copy()))
+
+    def stop_control(self, device):
+        import time
+
+        with self.lock:
+            self.calls.append((time.monotonic(), "stop", {}))
+
+    def close(self):
+        pass
+
+
+def applied_window(qtbot, backend):
+    from panther_tuner.models import Device
+
+    w = MainWindow()
+    qtbot.addWidget(w)
+    w.backend = backend
+    w.device = Device("Talon FX vers. C", 1, "", "Test", "26.3.0")
+    w.discovery_timer.stop()
+    w.poll_timer.stop()
+    w.control_panel.set_catalog(
+        {
+            "DutyCycleOut": {
+                "ConstructorParams": [{"Name": "Output", "Type": "double", "Min": "-1", "Max": "1"}]
+            }
+        }
+    )
+    w.navigate(1)
+    w.left_tabs.setCurrentIndex(1)
+    w.control_panel.editors["Output"].setText("0.2")
+    w.confirm = lambda *_: True
+    w.arm_controls()
+    qtbot.waitUntil(lambda: w.control_panel.armed)
+    w.apply_control()
+    return w
+
+
+def test_control_heartbeat_does_not_wait_behind_other_io(qtbot):
+    """The server holds a request over the robot program's for only ~200 ms."""
+    import time
+
+    from panther_tuner.ui.heartbeat import HOLD
+
+    backend = RecordingControlBackend()
+    w = applied_window(qtbot, backend)
+    qtbot.waitUntil(lambda: bool(backend.calls))
+    # A slow telemetry/discovery request occupies the ordered I/O worker.
+    w.worker.submit(lambda: time.sleep(0.8), lambda *_: None)
+    qtbot.wait(800)
+    assert w.control_panel.armed
+    times = [t for t, mode, _ in backend.calls if mode == "DutyCycleOut"]
+    assert len(times) >= 12
+    assert max(b - a for a, b in zip(times, times[1:])) < HOLD
+    w.stop_controls()
+    qtbot.waitUntil(lambda: backend.calls[-1][1] == "stop")
+    w.close()
+
+
+def test_reapply_updates_running_heartbeat_and_stop_is_last(qtbot):
+    backend = RecordingControlBackend()
+    w = applied_window(qtbot, backend)
+    heartbeat = w.active_control
+    qtbot.waitUntil(lambda: bool(backend.calls))
+    w.control_panel.editors["Output"].setText("-0.3")
+    w.apply_control()
+    assert w.active_control is heartbeat
+    qtbot.waitUntil(lambda: backend.calls[-1][2] == {"Output": "-0.3"})
+    w.control_panel.stop_requested.emit()
+    assert not w.control_panel.armed
+    qtbot.waitUntil(lambda: heartbeat.isFinished())
+    count = len(backend.calls)
+    qtbot.wait(150)
+    assert len(backend.calls) == count
+    assert backend.calls[-1][1] == "stop"
+    assert [c[1] for c in backend.calls].count("stop") == 1
+    w.close()
+
+
+def test_gui_stall_ends_heartbeat_and_requires_rearming(qtbot):
+    backend = RecordingControlBackend()
+    w = applied_window(qtbot, backend)
+    w.control_timer.stop()  # The GUI stops feeding its liveness deadline.
+    qtbot.waitUntil(lambda: not w.control_panel.armed, timeout=2000)
+    assert "GUI heartbeat stalled" in w.control_panel.note.text()
+    assert backend.calls[-1][1] == "stop"
+    assert w.active_control is None
+    w.close()
+
+
+def test_control_lapse_is_reported(qtbot):
+    import time
+
+    class SlowBackend(RecordingControlBackend):
+        def control(self, *args, **kwargs):
+            super().control(*args, **kwargs)
+            if len(self.calls) == 2:
+                time.sleep(0.22)
+
+    backend = SlowBackend()
+    w = applied_window(qtbot, backend)
+    qtbot.waitUntil(lambda: "reclaimed" in w.control_panel.note.text())
+    assert w.control_panel.armed
+    w.close()
+    assert backend.calls[-1][1] == "stop"
+
+
 @pytest.mark.integration
 def test_window_applies_and_stops_actual_vendor_simulated_output(qtbot, simulation):
     w = MainWindow()

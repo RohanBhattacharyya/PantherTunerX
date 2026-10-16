@@ -32,20 +32,27 @@ jobs:
         run: uv run python tools/smoke_bundle.py dist/PantherTunerX/PantherTunerX
       - if: runner.os == 'Windows'
         run: uv run python tools/smoke_bundle.py dist/PantherTunerX/PantherTunerX.exe
+      - if: runner.os == 'macOS'
+        run: uv run python tools/smoke_bundle.py dist/PantherTunerX.app/Contents/MacOS/PantherTunerX
       - if: runner.os == 'Linux'
         run: |
           desktop-file-validate packaging/linux/panther-tuner-x.desktop
           uv run python tools/package_linux.py --format deb
           uv run python tools/package_linux.py --format rpm
+      - run: uv run python tools/archive_bundle.py
       - if: runner.os == 'Linux'
         uses: actions/upload-artifact@v4
         with:
           name: PantherTunerX-Linux-packages
           path: dist/packages/
+          compression-level: 0
       - uses: actions/upload-artifact@v4
         with:
           name: PantherTunerX-${{ runner.os }}
-          path: dist/
+          path: |
+            dist/*.tar.gz
+            dist/*.zip
+          compression-level: 0
 
   arch-package:
     runs-on: ubuntu-latest
@@ -69,3 +76,4 @@ jobs:
         with:
           name: PantherTunerX-Arch-packages
           path: /tmp/panther-package/*.pkg.tar.zst
+          compression-level: 0

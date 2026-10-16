@@ -8,12 +8,12 @@
 | Windows 10/11 x64 | Yes | Yes | CANivore, with CTRE runtime and drivers |
 | macOS 13+ | Yes | Yes | Not supported by CTRE |
 
-Hardware behavior remains unverified. Application tests use the official Phoenix 26.3.0 simulator. Source installs require Python 3.10–3.13; **3.12.14 is the packaged runtime**. The current Phoenix dependency cannot run on Python 3.14. Native Linux packages include their own Python/Qt runtime and do not install Python packages into the distribution's environment.
+Hardware behavior remains unverified. Application tests use the official Phoenix 26.3.0 simulator. Source installs require Python 3.10–3.13; **3.12.14 is the packaged runtime**. The current Phoenix dependency cannot run on Python 3.14. Current CI package artifacts target x86-64. ARM64 packaging is supported by the recipes but has not been CI-validated; Qt wheel availability can require a newer glibc on ARM64. Native Linux packages include their own Python/Qt runtime and do not install Python packages into the distribution's environment.
 
 ## Arch Linux: makepkg
 
 ```sh
-sudo pacman -S --needed base-devel git uv desktop-file-utils
+sudo pacman -Syu --needed base-devel git uv desktop-file-utils
 git clone https://github.com/RohanBhattacharyya/PantherTunerX.git
 cd PantherTunerX
 makepkg -si
@@ -153,9 +153,9 @@ The image contains native Debian and RPM tooling. Source stays in your checkout;
 uv run python tools/build.py
 ```
 
-Linux and Windows produce `dist/PantherTunerX/`; macOS also produces an app bundle. Keep the executable with its accompanying directory. Bundles include Python, Qt, the SDK, images, and license notices. Packaging does not imply that redistribution rights for third-party components have changed; preserve [third-party notices](../THIRD_PARTY_NOTICES.md).
+Linux and Windows produce `dist/PantherTunerX/`; macOS also produces an app bundle. Download and extract the `.tar.gz` (Linux/macOS) or `.zip` (Windows) inside the CI artifact. Unix archives preserve executable bits and macOS framework links; do not copy individual loose files out of a bundle. Keep the executable with its accompanying directory. Bundles include Python, Qt, the SDK, images, and license notices. Packaging does not imply that redistribution rights for third-party components have changed; preserve [third-party notices](../THIRD_PARTY_NOTICES.md).
 
-CI builds desktop bundles on Linux, Windows, and macOS, creates `.deb`/`.rpm` artifacts on Linux, and builds the Arch recipe separately. Pinned dependencies and the lockfile make inputs repeatable; byte-for-byte reproducible or signed packages are not claimed.
+CI smoke-tests the frozen GUI and SDK on all three operating systems, builds desktop archives on Linux, Windows, and macOS, creates `.deb`/`.rpm` artifacts on Linux, and builds the Arch recipe separately. Pinned dependencies and the lockfile make inputs repeatable; byte-for-byte reproducible or signed packages are not claimed.
 
 ## Troubleshooting
 

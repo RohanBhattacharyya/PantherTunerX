@@ -35,7 +35,7 @@ Supported Phoenix 6 families: **Talon FX, Talon FXS, CANcoder, Pigeon 2, CANrang
 Build a native package and install it with pacman:
 
 ```sh
-sudo pacman -S --needed base-devel git uv desktop-file-utils
+sudo pacman -Syu --needed base-devel git uv desktop-file-utils
 git clone https://github.com/RohanBhattacharyya/PantherTunerX.git
 cd PantherTunerX
 makepkg -si

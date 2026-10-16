@@ -2,7 +2,7 @@
 
 Environment: Linux x86-64, Python 3.12.14, PySide6 6.10.2, pyqtgraph 0.14.0, Phoenix 26.3.0. Date: 2026-10-16.
 
-Current source validation: **57 tests passed**, including the real vendor simulation integration suite; Ruff lint and formatting checks passed.
+Current source validation: **66 tests passed**, including the real vendor simulation integration suite; Ruff lint and formatting checks passed.
 
 The automated suite exercises the real CTRE SDK with `CTR_TARGET=Simulation`. No physical CAN interfaces or CANivore USB adapter were present on the development machine. No physical motor behavior has been validated.
 
@@ -32,7 +32,17 @@ The actual Qt UI was rendered with Qt's offscreen platform against the vendor si
 
 `tools/build.py` successfully produced the Linux onedir bundle. `tools/smoke_bundle.py` launched the frozen GUI with `--simulate`, confirmed that its bundled SDK subprocess enumerated eight simulated devices, and read configuration, self-test and control metadata, and acquired buffered plot records through that subprocess. The source GUI and frozen GUI were both exercised.
 
-Windows and macOS build/test jobs are configured in CI but were **not run from this Linux environment**. Linux builds report optional pyqtgraph OpenGL and TIFF image-plugin dependency warnings; the app uses a 2D plot and SVG/PNG assets. Those optional features are not used.
+GitHub Actions verified source tests and desktop builds on Windows and macOS 14 (Apple Silicon), plus Linux and an Arch makepkg job. macOS CI now pins the supported Python 3.12.14 runtime. Its control watchdog test reads a single status signal rather than a slow full self-test, waits for asynchronous telemetry within a deadline, and keeps enable feeds active when verifying independent request expiry and Stop. No macOS simulation tests are disabled. SDK process/loop diagnostics are attached to failed integration tests. Linux builds report optional pyqtgraph OpenGL and TIFF image-plugin dependency warnings; the app uses a 2D plot and SVG/PNG assets. Those optional features are not used.
+
+## Native Linux installation checks
+
+- Built the actual Arch PKGBUILD with `makepkg` on x86-64; pacman successfully inspected the resulting `.pkg.tar.zst`. The same recipe also passed in CI's official Arch container.
+- Built the frozen application in the Ubuntu 22.04 baseline container and confirmed its bundled glibc requirement is 2.35.
+- Built `.deb` and `.rpm` packages using native dpkg-deb and rpmbuild tooling.
+- Installed with APT in a clean Ubuntu 22.04 container and DNF in a clean Fedora 44 container. In both, the installed command ran, the frozen GUI/SDK smoke test enumerated eight simulated devices and read configuration/self-test/control metadata/buffered records, and package-manager removal removed the launcher.
+- Unit checks cover ELF architecture detection, staging/permission rules, preserved library links, mandatory notices, non-overwriting behavior, glibc requirement detection, and portable archives preserving Unix executable bits/macOS framework links. Desktop entries and shell recipes were validated.
+
+ARM64 native package builds remain unverified. These container checks use the offscreen Qt platform and simulation; no physical CAN devices or live desktop sessions are tested.
 
 ## Reproduce
 

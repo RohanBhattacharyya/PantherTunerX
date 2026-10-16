@@ -1,0 +1,35 @@
+# Private Python/Qt/SDK libraries are supplied by the frozen application.
+# Do not expose private SONAMEs or alter the bootloader/native vendor libraries.
+%global debug_package %{nil}
+%global __os_install_post %{nil}
+
+Name:           panther-tuner-x
+Version:        @VERSION@
+Release:        1
+Summary:        Desktop workbench for CTRE Phoenix 6 devices
+License:        MIT AND LGPL-3.0-only AND LicenseRef-CTRE AND LicenseRef-Device-Images
+URL:            https://github.com/RohanBhattacharyya/PantherTunerX
+BuildArch:      @ARCH@
+AutoReqProv:    no
+Requires:       glibc >= @GLIBC@, libstdc++, libglvnd-egl, libglvnd-glx
+Requires:       libX11, libXext, libXrender, libxcb, libxkbcommon-x11
+Requires:       xcb-util-cursor, xcb-util-wm, xcb-util-image, xcb-util-keysyms, xcb-util-renderutil
+Requires:       fontconfig, freetype, dbus-libs, zlib, libusb1
+
+%description
+Native Qt desktop application for device discovery, diagnostics, buffered plotting,
+configuration and explicit control requests through Phoenix Diagnostics.
+Includes an isolated vendor simulation mode. Physical hardware validation is pending.
+The application bundles its supported Python runtime and private dependencies.
+
+%install
+mkdir -p %{buildroot}
+cp -a %{_sourcedir}/root/. %{buildroot}/
+
+%files
+%defattr(-,root,root,-)
+/opt/panther-tuner-x/
+/usr/bin/panther-tuner
+/usr/share/applications/panther-tuner-x.desktop
+%doc /usr/share/doc/panther-tuner-x/
+%license /usr/share/licenses/panther-tuner-x/

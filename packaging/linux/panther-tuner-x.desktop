@@ -1,0 +1,17 @@
+[Desktop Entry]
+Type=Application
+Name=Panther Tuner X
+GenericName=CAN Device Workbench
+Comment=Discover, configure, diagnose and plot Phoenix 6 devices
+Exec=panther-tuner
+TryExec=panther-tuner
+Icon=applications-engineering
+Terminal=false
+Categories=Science;Engineering;
+Keywords=robotics;FRC;CAN;Phoenix;CTRE;
+StartupNotify=true
+Actions=Simulation;
+
+[Desktop Action Simulation]
+Name=Start in Simulation Mode
+Exec=panther-tuner --simulate

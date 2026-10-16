@@ -8,6 +8,18 @@ import pytest
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+    backend = item.funcargs.get("simulation")
+    if report.failed and backend is not None:
+        status = backend.process.poll() if backend.process else "not started"
+        report.sections.append(
+            ("Phoenix SDK host diagnostics", f"Process exit status: {status}\n{backend.sdk_log_tail()}")
+        )
+
+
 @pytest.fixture(scope="session", autouse=True)
 def isolated_settings(tmp_path_factory):
     from PySide6.QtCore import QSettings

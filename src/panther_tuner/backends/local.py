@@ -100,6 +100,21 @@ class LocalBackend(DiagnosticsBackend):
         elif enabled:
             raise TunerError("SDK control watchdog is unavailable")
 
+    def sdk_log_tail(self, limit=12000):
+        """Expose child failures to diagnostics without changing its file offset."""
+        if not self.log or self.log.closed:
+            return "SDK log unavailable"
+        size = os.fstat(self.log.fileno()).st_size
+        if hasattr(os, "pread"):
+            return os.pread(self.log.fileno(), min(size, limit), max(0, size - limit)).decode(
+                errors="replace"
+            )
+        position = self.log.tell()
+        self.log.seek(max(0, size - limit))
+        result = self.log.read().decode(errors="replace")
+        self.log.seek(position)
+        return result
+
     def close(self):
         self.enable_lease(False)
         super().close()

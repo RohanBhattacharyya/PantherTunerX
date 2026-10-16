@@ -3,6 +3,7 @@
 import argparse
 import math
 import os
+import platform
 import socket
 import threading
 import time
@@ -48,6 +49,13 @@ def main():
     p.add_argument("--bus", default="can0")
     args = p.parse_args()
     os.environ["CTR_TARGET"] = "Simulation" if args.simulation else "Hardware"
+    debug = os.environ.get("PANTHER_SDK_DEBUG") == "1"
+    if debug:
+        print(f"SDK host: {platform.platform()} Python {platform.python_version()}", flush=True)
+        if os.name == "posix":
+            import resource
+
+            print(f"SDK file descriptor limits: {resource.getrlimit(resource.RLIMIT_NOFILE)}", flush=True)
     from phoenix6 import CANBus, hardware, unmanaged
 
     unmanaged.set_phoenix_diagnostics_start_time(0)
@@ -71,6 +79,8 @@ def main():
         network.get_status()
     start = time.monotonic()
     was_enabled = False
+    iterations = 0
+    last_report = start
     while True:
         t = time.monotonic() - start
         # Official non-FRC actuator enable. Never fed during discovery/plotting.
@@ -97,6 +107,10 @@ def main():
                 state.set_roll(2 * math.cos(t))
             elif isinstance(device, hardware.CANrange):
                 state.set_distance(0.5 + 0.1 * math.sin(t))
+        iterations += 1
+        if debug and time.monotonic() - last_report >= 2:
+            print(f"SDK loop: uptime={t:.2f}s iterations={iterations} devices={len(devices)}", flush=True)
+            last_report = time.monotonic()
         time.sleep(0.02)
 
 

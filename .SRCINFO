@@ -1,0 +1,40 @@
+pkgbase = panther-tuner-x-git
+	pkgdesc = Desktop diagnostics, configuration and plotting for CTRE Phoenix 6 devices
+	pkgver = 0.1.0.r1.gd7f6a14
+	pkgrel = 1
+	url = https://github.com/RohanBhattacharyya/PantherTunerX
+	arch = x86_64
+	arch = aarch64
+	license = MIT
+	license = LGPL-3.0-only
+	license = LicenseRef-CTRE
+	license = LicenseRef-Device-Images
+	checkdepends = desktop-file-utils
+	makedepends = git
+	makedepends = uv>=0.13.1
+	depends = glibc>=2.35
+	depends = gcc-libs
+	depends = libglvnd
+	depends = libx11
+	depends = libxext
+	depends = libxrender
+	depends = libxcb
+	depends = libxkbcommon-x11
+	depends = xcb-util-cursor
+	depends = xcb-util-wm
+	depends = xcb-util-image
+	depends = xcb-util-keysyms
+	depends = xcb-util-renderutil
+	depends = fontconfig
+	depends = freetype2
+	depends = dbus
+	depends = zlib
+	depends = libusb
+	provides = panther-tuner-x
+	conflicts = panther-tuner-x
+	options = !strip
+	options = !debug
+	source = PantherTunerX::git+https://github.com/RohanBhattacharyya/PantherTunerX.git#branch=main
+	sha256sums = SKIP
+
+pkgname = panther-tuner-x-git

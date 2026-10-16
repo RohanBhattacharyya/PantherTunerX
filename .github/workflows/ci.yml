@@ -2,6 +2,7 @@ name: Test and build desktop
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   desktop:
@@ -12,15 +13,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       QT_QPA_PLATFORM: offscreen
+      PANTHER_SDK_DEBUG: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
         with:
-          version: "0.9.3"
-          python-version: "3.12"
+          version: "0.13.1"
+          python-version: "3.12.14"
           enable-cache: true
       - if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libxcb-cursor0 libxkbcommon-x11-0
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libxcb-cursor0 libxkbcommon-x11-0 libusb-1.0-0 desktop-file-utils rpm
       - run: uv sync --frozen
       - run: uv run ruff check .
       - run: uv run ruff format --check .
@@ -30,7 +32,40 @@ jobs:
         run: uv run python tools/smoke_bundle.py dist/PantherTunerX/PantherTunerX
       - if: runner.os == 'Windows'
         run: uv run python tools/smoke_bundle.py dist/PantherTunerX/PantherTunerX.exe
+      - if: runner.os == 'Linux'
+        run: |
+          desktop-file-validate packaging/linux/panther-tuner-x.desktop
+          uv run python tools/package_linux.py --format deb
+          uv run python tools/package_linux.py --format rpm
+      - if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: PantherTunerX-Linux-packages
+          path: dist/packages/
       - uses: actions/upload-artifact@v4
         with:
           name: PantherTunerX-${{ runner.os }}
           path: dist/
+
+  arch-package:
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    steps:
+      - name: Install Arch build and runtime dependencies
+        run: |
+          pacman -Syu --noconfirm --needed git uv desktop-file-utils libglvnd libx11 libxext libxrender libxcb libxkbcommon-x11 xcb-util-cursor xcb-util-wm xcb-util-image xcb-util-keysyms xcb-util-renderutil fontconfig freetype2 dbus zlib libusb
+          useradd -m builder
+      - uses: actions/checkout@v4
+      - name: Build the checked-out revision with makepkg
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git clone --bare "$GITHUB_WORKSPACE" /tmp/panther-source.git
+          git --git-dir=/tmp/panther-source.git update-ref refs/heads/main "$GITHUB_SHA"
+          mkdir /tmp/panther-package
+          cp PKGBUILD /tmp/panther-package/
+          chown -R builder:builder /tmp/panther-package
+          su builder -c 'cd /tmp/panther-package && PANTHER_SOURCE_URL=file:///tmp/panther-source.git makepkg --noconfirm'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PantherTunerX-Arch-packages
+          path: /tmp/panther-package/*.pkg.tar.zst

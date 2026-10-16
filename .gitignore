@@ -11,3 +11,10 @@ ctre_sim/
 *.hoot
 *.hoot.index
 *.log
+# makepkg source cache, isolated builds and native packages
+/PantherTunerX/
+/src/PantherTunerX/
+/src/.python/
+/src/.uv-cache/
+/pkg/
+*.pkg.tar.*

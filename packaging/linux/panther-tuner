@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /opt/panther-tuner-x/PantherTunerX "$@"

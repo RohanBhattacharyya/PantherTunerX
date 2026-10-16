@@ -142,33 +142,39 @@ def test_vendor_control_output_and_two_independent_watchdogs(simulation):
         # watchdog being tested; the GUI uses the same point-read path in tests.
         return simulation.sample(device, [duty_id]).values[duty_id]
 
+    def wait_for_duty(predicate, *, drive=False, feed=False):
+        deadline = time.monotonic() + 1
+        while True:
+            if drive:
+                simulation.control(device, "DutyCycleOut", params, confirmed=True)
+            if feed:
+                simulation.enable_lease(True)
+            value = duty()
+            if predicate(value):
+                return
+            assert time.monotonic() < deadline, f"Duty cycle did not settle: {value}"
+            time.sleep(0.03)
+
     try:
         with pytest.raises(TunerError, match="explicit"):
             simulation.control(device, "DutyCycleOut", params)
         assert duty() == 0
-        for _ in range(5):
-            simulation.control(device, "DutyCycleOut", params, confirmed=True)
-            simulation.enable_lease(True)
-            time.sleep(0.06)
-        assert 0.08 < duty() < 0.12
+        wait_for_duty(lambda v: 0.08 < v < 0.12, drive=True, feed=True)
         # Lose the GUI enable lease, despite the last request being acknowledged.
         time.sleep(0.5)
-        assert duty() == 0
+        wait_for_duty(lambda v: v == 0)
         # Independently lose control HTTP heartbeats while continuing global enable.
         simulation.control(device, "DutyCycleOut", params, confirmed=True)
         for _ in range(20):
             simulation.enable_lease(True)
             time.sleep(0.05)
-        assert duty() == 0
+        wait_for_duty(lambda v: v == 0, feed=True)
         # Explicit Stop must also neutralize output while enable continues.
-        for _ in range(3):
-            simulation.control(device, "DutyCycleOut", params, confirmed=True)
-            simulation.enable_lease(True)
-            time.sleep(0.05)
-        assert duty() > 0.08
+        wait_for_duty(lambda v: v > 0.08, drive=True, feed=True)
         simulation.stop_control(device)
-        time.sleep(0.1)
-        assert duty() == 0
+        # Native status signals update asynchronously. Keep global enable alive
+        # while waiting for the Stop result, so enable expiry cannot pass it.
+        wait_for_duty(lambda v: v == 0, feed=True)
     finally:
         simulation.enable_lease(False)
         simulation.stop_control(device)

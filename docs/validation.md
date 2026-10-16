@@ -2,7 +2,7 @@
 
 Environment: Linux x86-64, Python 3.12.14, PySide6 6.10.2, pyqtgraph 0.14.0, Phoenix 26.3.0. Date: 2026-10-16.
 
-Current source validation: **66 tests passed**, including the real vendor simulation integration suite; Ruff lint and formatting checks passed.
+Current source validation: **71 tests passed**, including the real vendor simulation integration suite; Ruff lint and formatting checks passed.
 
 The automated suite exercises the real CTRE SDK with `CTR_TARGET=Simulation`. No physical CAN interfaces or CANivore USB adapter were present on the development machine. No physical motor behavior has been validated.
 
@@ -24,7 +24,7 @@ Blink / clear sticky faults and device rename succeeded in simulation. CAN ID ch
 
 Buffered integration checks confirm delayed fetches retain intermediate records, overlapping fetches do not duplicate ordinals, and deliberate ring overruns produce missing-record counts/gaps. Control integration checks confirm actual simulated duty output, explicit Stop, enable lease expiry and HTTP request heartbeat expiry while global enable continues. UI tests verify editing and cancelled Enable send no requests, and leaving Control stops an applied request, stalled requests disarm without automatic resume, and expired IPC messages cannot reenable output. An additional Qt integration test exercises the actual editor-to-local-SDK path: arm produces no output, Apply produces approximately 10% simulated duty cycle, and Stop returns output to zero. These checks do not validate every control mode or physical firmware.
 
-Other automated checks cover malformed server responses, HTTP-success/device-error handling, missing readings, timeouts without write retries, explicit mutation confirmation, duplicate/replaced/missing target rejection, concurrent external configuration edits, invalid and cross-model imports, validation of finite values and ranges, telemetry retention and CSV gaps, and Qt startup/device/configuration/plot/self-test/disconnect workflows.
+Other automated checks cover malformed server responses, HTTP-success/device-error handling, missing readings, timeouts without write retries, bounded readback recovery after acknowledged writes, explicit mutation confirmation, duplicate/replaced/missing target rejection, concurrent external configuration edits, invalid and cross-model imports, validation of finite values and ranges, telemetry retention and CSV gaps, and Qt startup/device/configuration/plot/self-test/disconnect workflows.
 
 ## Desktop and packaging
 

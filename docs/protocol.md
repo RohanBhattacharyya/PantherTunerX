@@ -78,6 +78,8 @@ headers = {"Content-Type": "application/octet-stream", "X-Decoded-Size": str(len
 # POST /?action=setconfigv2&model=<reported model>&id=<id>&canbus=<reported bus>
 ```
 
+After a successful configuration POST, readback retries only vendor device-not-present (-102) or stale-frame (-1003) responses for at most one second. This accommodates an observed brief device-status interruption during simulator configuration updates. The POST itself is never repeated; HTTP timeouts, pre-write checks, and other vendor errors still fail immediately.
+
 The server also supports `GET setconfigv2&file=<path on server>`, verified with a locally created file. The app uses the POST form so no remote filesystem access, SSH, or copying files to the roboRIO is needed. Blink and rename succeeded against simulation. ID changes returned a vendor error (-109); this is displayed, without claiming the device ID changed.
 
 ## Unsupported protocol areas

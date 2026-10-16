@@ -8,6 +8,14 @@ class TunerError(Exception):
     """A communication, capability or validation error suitable for presentation."""
 
 
+class DeviceError(TunerError):
+    """A vendor response with a preserved action and numeric error code."""
+
+    def __init__(self, action, code, message):
+        self.action, self.code = action, code
+        super().__init__(f"{action}: {message} ({code})")
+
+
 @dataclass(frozen=True)
 class Device:
     model: str

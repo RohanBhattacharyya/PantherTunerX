@@ -12,7 +12,7 @@ import httpx
 from ..buffered import PlotCursor
 from ..configuration import Configuration
 from ..controls import encode_control
-from ..models import Device, PlotBatch, Sample, Signal, TunerError
+from ..models import Device, DeviceError, PlotBatch, Sample, Signal, TunerError
 from ..protocol import checked_response, encode_payload
 
 
@@ -180,8 +180,17 @@ class DiagnosticsBackend:
         groups = copy.deepcopy(config.groups)
         # Full schema is accepted by the server; baseline comparison protects all fields.
         self.request("setconfigv2", config.device, payload={"Device": groups, "JsonVersion": 2})
-        # A timeout is never retried: the write may already have succeeded.
-        return self.read_config(config.device)
+        # A successful configuration update can briefly interrupt device status.
+        # Retry ONLY readback's known presence/freshness errors, with a deadline.
+        # An uncertain POST, other errors, or HTTP timeouts are never repeated.
+        deadline = time.monotonic() + 1
+        while True:
+            try:
+                return self.read_config(config.device)
+            except DeviceError as error:
+                if error.code not in (-102, -1003) or time.monotonic() >= deadline:
+                    raise
+                time.sleep(0.05)
 
     def assert_target(self, device: Device):
         """HTTP mutations cannot uniquely address duplicate model/ID/bus tuples."""

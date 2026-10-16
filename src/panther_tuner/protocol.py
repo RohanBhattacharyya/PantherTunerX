@@ -3,7 +3,7 @@
 import base64
 import json
 
-from .models import TunerError
+from .models import DeviceError, TunerError
 
 
 def encode_payload(payload: dict) -> tuple[bytes, dict[str, str]]:
@@ -19,5 +19,5 @@ def checked_response(action: str, result) -> dict:
         raise TunerError(f"{action}: unrecognized diagnostics response")
     status = result["GeneralReturn"]
     if status.get("Error") != 0:
-        raise TunerError(f"{action}: {status.get('ErrorMessage', 'Unknown error')} ({status.get('Error')})")
+        raise DeviceError(action, status.get("Error"), status.get("ErrorMessage", "Unknown error"))
     return result

@@ -5,7 +5,7 @@ pkgrel=1
 pkgdesc='Desktop diagnostics, configuration and plotting for CTRE Phoenix 6 devices'
 arch=('x86_64' 'aarch64')
 url='https://github.com/RohanBhattacharyya/PantherTunerX'
-license=('MIT' 'LGPL-3.0-only' 'LicenseRef-CTRE' 'LicenseRef-Device-Images')
+license=('MIT' 'Apache-2.0' 'LGPL-3.0-only' 'LicenseRef-CTRE' 'LicenseRef-Device-Images')
 depends=('glibc>=2.35' 'gcc-libs' 'libglvnd' 'libx11' 'libxext' 'libxrender'
          'libxcb' 'libxkbcommon-x11' 'xcb-util-cursor' 'xcb-util-wm'
          'xcb-util-image' 'xcb-util-keysyms' 'xcb-util-renderutil'

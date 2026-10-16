@@ -40,7 +40,8 @@ def main():
     notices.mkdir(exist_ok=True, parents=True)
     for name in ["LICENSE", "THIRD_PARTY_NOTICES.md"]:
         shutil.copy2(ROOT / name, notices / name)
-    shutil.copy2(ROOT / "docs" / "licenses" / "CTRE_LICENSE.txt", notices / "CTRE_LICENSE.txt")
+    for name in ["CTRE_LICENSE.txt", "MDI_LICENSE.txt"]:
+        shutil.copy2(ROOT / "docs" / "licenses" / name, notices / name)
     for package in [
         "phoenix6",
         "PySide6",

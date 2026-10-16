@@ -1,0 +1,36 @@
+name: Test and build desktop
+on:
+  push:
+  pull_request:
+
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-latest, macos-14]
+    runs-on: ${{ matrix.os }}
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.9.3"
+          python-version: "3.12"
+          enable-cache: true
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libxcb-cursor0 libxkbcommon-x11-0
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest -q
+      - run: uv run python tools/build.py
+      - if: runner.os == 'Linux'
+        run: uv run python tools/smoke_bundle.py dist/PantherTunerX/PantherTunerX
+      - if: runner.os == 'Windows'
+        run: uv run python tools/smoke_bundle.py dist/PantherTunerX/PantherTunerX.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PantherTunerX-${{ runner.os }}
+          path: dist/

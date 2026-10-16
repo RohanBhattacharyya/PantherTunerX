@@ -1,0 +1,680 @@
+{
+  "GeneralReturn": {
+    "Action": "decoratedselftest",
+    "CANbus": "",
+    "Error": 0,
+    "ErrorMessage": "No Error",
+    "ID": 1,
+    "Model": "Talon FX vers. C"
+  },
+  "SelfTest": {
+    "10001": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10002": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10004": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10005": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10007": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10008": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10010": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10011": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10013": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10014": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10016": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10017": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10049": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10050": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10052": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10053": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10055": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10056": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10058": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10059": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10061": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10062": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10064": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10065": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10067": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10068": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10070": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10071": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10073": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10074": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10076": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10077": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10079": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10080": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10082": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10083": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10085": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10086": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10088": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10089": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10091": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10092": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10094": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10095": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10097": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10098": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10100": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10101": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10145": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10146": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10148": {
+      "Units": "",
+      "Value": "False"
+    },
+    "10149": {
+      "Units": "",
+      "Value": "False"
+    },
+    "1025": {
+      "Units": "",
+      "Value": "Disabled"
+    },
+    "1772": {
+      "Units": "V",
+      "Value": "0.000000"
+    },
+    "1773": {
+      "Units": "",
+      "Value": "Open"
+    },
+    "1774": {
+      "Units": "",
+      "Value": "Open"
+    },
+    "1775": {
+      "Units": "",
+      "Value": "PositiveIsCounterClockwise"
+    },
+    "1776": {
+      "Units": "fractional",
+      "Value": "0.000000"
+    },
+    "1778": {
+      "Units": "A",
+      "Value": "0.000000"
+    },
+    "1780": {
+      "Units": "A",
+      "Value": "0.000000"
+    },
+    "1781": {
+      "Units": "V",
+      "Value": "4.000000"
+    },
+    "1782": {
+      "Units": "\u2103",
+      "Value": "24.000000"
+    },
+    "1783": {
+      "Units": "\u2103",
+      "Value": "20.000000"
+    },
+    "1785": {
+      "Units": "rotations per second",
+      "Value": "0.000000"
+    },
+    "1786": {
+      "Units": "rotations",
+      "Value": "0.000000"
+    },
+    "1793": {
+      "Units": "fractional",
+      "Value": "0.000000"
+    },
+    "1794": {
+      "Units": "V",
+      "Value": "0.000000"
+    },
+    "1795": {
+      "Units": "A",
+      "Value": "0.000000"
+    },
+    "1796": {
+      "Units": "fractional",
+      "Value": "0.000000"
+    },
+    "1797": {
+      "Units": "V",
+      "Value": "0.000000"
+    },
+    "1798": {
+      "Units": "A",
+      "Value": "0.000000"
+    },
+    "1799": {
+      "Units": "",
+      "Value": "DisabledOutput"
+    },
+    "1810": {
+      "Units": "rotations",
+      "Value": "0.000000"
+    },
+    "1811": {
+      "Units": "rotations per second",
+      "Value": "0.000000"
+    },
+    "1812": {
+      "Units": "rotations",
+      "Value": "0.000000"
+    },
+    "1813": {
+      "Units": "rotations per second",
+      "Value": "0.000000"
+    },
+    "1817": {
+      "Units": "fractional",
+      "Value": "0.000000"
+    },
+    "1818": {
+      "Units": "V",
+      "Value": "0.000000"
+    },
+    "1819": {
+      "Units": "A",
+      "Value": "0.000000"
+    },
+    "1820": {
+      "Units": "fractional",
+      "Value": "0.000000"
+    },
+    "1821": {
+      "Units": "V",
+      "Value": "0.000000"
+    },
+    "1822": {
+      "Units": "A",
+      "Value": "0.000000"
+    },
+    "1823": {
+      "Units": "fractional",
+      "Value": "0.000000"
+    },
+    "1824": {
+      "Units": "V",
+      "Value": "0.000000"
+    },
+    "1825": {
+      "Units": "A",
+      "Value": "0.000000"
+    },
+    "1826": {
+      "Units": "",
+      "Value": "0"
+    },
+    "1827": {
+      "Units": "rotations per second",
+      "Value": "0.000000"
+    },
+    "1828": {
+      "Units": "rotations per second\u00b2",
+      "Value": "0.000000"
+    },
+    "1830": {
+      "Units": "",
+      "Value": "Off"
+    },
+    "1838": {
+      "Units": "",
+      "Value": "DisabledOutput"
+    },
+    "1839": {
+      "Units": "fractional",
+      "Value": "0.000000"
+    },
+    "1840": {
+      "Units": "V",
+      "Value": "0.000000"
+    },
+    "1841": {
+      "Units": "A",
+      "Value": "0.000000"
+    },
+    "1842": {
+      "Units": "fractional",
+      "Value": "0.000000"
+    },
+    "1843": {
+      "Units": "V",
+      "Value": "0.000000"
+    },
+    "1844": {
+      "Units": "A",
+      "Value": "0.000000"
+    },
+    "1846": {
+      "Units": "rotations per second",
+      "Value": "0.000000"
+    },
+    "1847": {
+      "Units": "rotations",
+      "Value": "0.000000"
+    },
+    "1850": {
+      "Units": "rotations per second",
+      "Value": "0.000000"
+    },
+    "1851": {
+      "Units": "rotations",
+      "Value": "0.000000"
+    },
+    "1853": {
+      "Units": "rotations",
+      "Value": "0.000000"
+    },
+    "1854": {
+      "Units": "rotations per second",
+      "Value": "0.000000"
+    },
+    "1855": {
+      "Units": "rotations",
+      "Value": "0.000000"
+    },
+    "1856": {
+      "Units": "rotations per second",
+      "Value": "0.000000"
+    },
+    "1860": {
+      "Units": "fractional",
+      "Value": "0.000000"
+    },
+    "1861": {
+      "Units": "V",
+      "Value": "0.000000"
+    },
+    "1862": {
+      "Units": "A",
+      "Value": "0.000000"
+    },
+    "1863": {
+      "Units": "fractional",
+      "Value": "0.000000"
+    },
+    "1864": {
+      "Units": "V",
+      "Value": "0.000000"
+    },
+    "1865": {
+      "Units": "A",
+      "Value": "0.000000"
+    },
+    "1866": {
+      "Units": "fractional",
+      "Value": "0.000000"
+    },
+    "1867": {
+      "Units": "V",
+      "Value": "0.000000"
+    },
+    "1868": {
+      "Units": "A",
+      "Value": "0.000000"
+    },
+    "1869": {
+      "Units": "",
+      "Value": "0"
+    },
+    "1870": {
+      "Units": "rotations per second",
+      "Value": "0.000000"
+    },
+    "1871": {
+      "Units": "rotations per second\u00b2",
+      "Value": "0.000000"
+    },
+    "1904": {
+      "Units": "",
+      "Value": "Coast"
+    },
+    "1910": {
+      "Units": "fractional",
+      "Value": "1.000000"
+    },
+    "1911": {
+      "Units": "fractional",
+      "Value": "-1.000000"
+    },
+    "1912": {
+      "Units": "V",
+      "Value": "16.000000"
+    },
+    "1913": {
+      "Units": "V",
+      "Value": "-16.000000"
+    },
+    "1914": {
+      "Units": "A",
+      "Value": "800.000000"
+    },
+    "1915": {
+      "Units": "A",
+      "Value": "-800.000000"
+    },
+    "1917": {
+      "Units": "rotations",
+      "Value": "0.000000"
+    },
+    "1918": {
+      "Units": "scalar",
+      "Value": "1.000000"
+    },
+    "1919": {
+      "Units": "scalar",
+      "Value": "1.000000"
+    },
+    "1920": {
+      "Units": "",
+      "Value": "RotorSensor"
+    },
+    "1921": {
+      "Units": "",
+      "Value": "0"
+    },
+    "1929": {
+      "Units": "",
+      "Value": "False"
+    },
+    "1930": {
+      "Units": "rotations",
+      "Value": "0.000000"
+    },
+    "1935": {
+      "Units": "",
+      "Value": "False"
+    },
+    "1936": {
+      "Units": "rotations",
+      "Value": "0.000000"
+    },
+    "1949": {
+      "Units": "fractional",
+      "Value": "1.000000"
+    },
+    "1950": {
+      "Units": "V",
+      "Value": "16.000000"
+    },
+    "1951": {
+      "Units": "A",
+      "Value": "800.000000"
+    },
+    "1963": {
+      "Units": "",
+      "Value": "BridgeReq_Coast"
+    },
+    "1987": {
+      "Units": "rotations",
+      "Value": "0.000000"
+    },
+    "1988": {
+      "Units": "rotations per second",
+      "Value": "0.000000"
+    },
+    "2081": {
+      "Units": "",
+      "Value": "0.000000"
+    },
+    "2091": {
+      "Units": "\u2103",
+      "Value": "0.000000"
+    },
+    "2117": {
+      "Units": "",
+      "Value": "KrakenX60_Integrated"
+    },
+    "414": {
+      "Units": "seconds",
+      "Value": "11.000000"
+    },
+    "615": {
+      "Units": "",
+      "Value": "ControlDisabled"
+    },
+    "751": {
+      "Units": "",
+      "Value": "Licensed"
+    },
+    "754": {
+      "Units": "",
+      "Value": "Licensed"
+    },
+    "830": {
+      "Units": "",
+      "Value": "Frc_Unlocked"
+    },
+    "831": {
+      "Units": "",
+      "Value": "Disabled"
+    },
+    "833": {
+      "Units": "",
+      "Value": "Orange"
+    },
+    "834": {
+      "Units": "",
+      "Value": "Off"
+    },
+    "835": {
+      "Units": "",
+      "Value": "Off"
+    },
+    "836": {
+      "Units": "",
+      "Value": "Orange"
+    },
+    "837": {
+      "Units": "s",
+      "Value": "0.288000"
+    },
+    "838": {
+      "Units": "s",
+      "Value": "0.288000"
+    },
+    "839": {
+      "Units": "s",
+      "Value": "0.288000"
+    },
+    "840": {
+      "Units": "s",
+      "Value": "0.288000"
+    },
+    "842": {
+      "Units": "",
+      "Value": "0"
+    },
+    "843": {
+      "Units": "",
+      "Value": "0"
+    },
+    "844": {
+      "Units": "",
+      "Value": "0"
+    },
+    "845": {
+      "Units": "",
+      "Value": "0"
+    },
+    "877": {
+      "Units": "rotations per second",
+      "Value": "0.000000"
+    },
+    "878": {
+      "Units": "rotations",
+      "Value": "0.000000"
+    },
+    "Build-Info": {
+      "Units": "",
+      "Value": "Build: May 22 2026 21:24:18"
+    },
+    "CAN Bus Info": {
+      "Units": "",
+      "Value": "This device is simulated on the default CAN Bus"
+    },
+    "Device Name": {
+      "Units": "",
+      "Value": "Talon FX vers. C (Device ID 1)"
+    },
+    "Firmware Version": {
+      "Units": "",
+      "Value": "26.3.0.0 (Phoenix 6)"
+    },
+    "Phoenix Version": {
+      "Units": "",
+      "Value": "26.3.0"
+    },
+    "Serial No": {
+      "Units": "",
+      "Value": "00000000000000000000000000000001"
+    }
+  }
+}

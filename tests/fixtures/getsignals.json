@@ -1,0 +1,852 @@
+{
+  "GeneralReturn": {
+    "Action": "getsignals",
+    "CANbus": "",
+    "Error": 0,
+    "ErrorMessage": "No Error",
+    "ID": 1,
+    "Model": "Talon FX vers. C"
+  },
+  "Signals": [
+    {
+      "Id": 734,
+      "Name": "VersionMajor",
+      "Summary": "App Major Version number.",
+      "Units": ""
+    },
+    {
+      "Id": 735,
+      "Name": "VersionMinor",
+      "Summary": "App Minor Version number.",
+      "Units": ""
+    },
+    {
+      "Id": 736,
+      "Name": "VersionBugfix",
+      "Summary": "App Bugfix Version number.",
+      "Units": ""
+    },
+    {
+      "Id": 737,
+      "Name": "VersionBuild",
+      "Summary": "App Build Version number.",
+      "Units": ""
+    },
+    {
+      "Id": 738,
+      "Name": "Version",
+      "Summary": "Full Version of firmware in device.  The format is a four byte value.",
+      "Units": ""
+    },
+    {
+      "Id": 844,
+      "Name": "FaultField",
+      "Summary": "Integer representing all fault flags reported by the device.",
+      "Units": ""
+    },
+    {
+      "Id": 845,
+      "Name": "StickyFaultField",
+      "Summary": "Integer representing all (persistent) sticky fault flags reported by the device.",
+      "Units": ""
+    },
+    {
+      "Id": 1772,
+      "Name": "MotorVoltage",
+      "Summary": "The applied (output) motor voltage.",
+      "Units": "V"
+    },
+    {
+      "Id": 1773,
+      "Name": "ForwardLimit",
+      "Summary": "Forward Limit Pin.",
+      "Units": ""
+    },
+    {
+      "Id": 1774,
+      "Name": "ReverseLimit",
+      "Summary": "Reverse Limit Pin.",
+      "Units": ""
+    },
+    {
+      "Id": 1775,
+      "Name": "AppliedRotorPolarity",
+      "Summary": "The applied rotor polarity as seen from the front of the motor.  This typically is determined by the Inverted config, but can be overridden if using Follower features.",
+      "Units": ""
+    },
+    {
+      "Id": 1776,
+      "Name": "DutyCycle",
+      "Summary": "The applied motor duty cycle.",
+      "Units": "fractional"
+    },
+    {
+      "Id": 1778,
+      "Name": "TorqueCurrent",
+      "Summary": "Current corresponding to the torque output by the motor. Similar to StatorCurrent. Users will likely prefer this current to calculate the applied torque to the rotor.",
+      "Units": "A"
+    },
+    {
+      "Id": 1779,
+      "Name": "StatorCurrent",
+      "Summary": "Current corresponding to the stator windings. Similar to TorqueCurrent. Users will likely prefer TorqueCurrent over StatorCurrent.",
+      "Units": "A"
+    },
+    {
+      "Id": 1780,
+      "Name": "SupplyCurrent",
+      "Summary": "Measured supply side current.",
+      "Units": "A"
+    },
+    {
+      "Id": 1781,
+      "Name": "SupplyVoltage",
+      "Summary": "Measured supply voltage to the device.",
+      "Units": "V"
+    },
+    {
+      "Id": 1782,
+      "Name": "DeviceTemp",
+      "Summary": "Temperature of device.",
+      "Units": "\u2103"
+    },
+    {
+      "Id": 1783,
+      "Name": "ProcessorTemp",
+      "Summary": "Temperature of the processor.",
+      "Units": "\u2103"
+    },
+    {
+      "Id": 1785,
+      "Name": "RotorVelocity",
+      "Summary": "Velocity of the motor rotor. This velocity is not affected by any feedback configs.",
+      "Units": "rotations per second"
+    },
+    {
+      "Id": 1786,
+      "Name": "RotorPosition",
+      "Summary": "Position of the motor rotor. This position is only affected by the RotorOffset config and calls to setPosition.",
+      "Units": "rotations"
+    },
+    {
+      "Id": 1789,
+      "Name": "Velocity",
+      "Summary": "Velocity of the device in mechanism rotations per second. This can be the velocity of a remote sensor and is affected by the RotorToSensorRatio and SensorToMechanismRatio configs.",
+      "Units": "rotations per second"
+    },
+    {
+      "Id": 1790,
+      "Name": "Position",
+      "Summary": "Position of the device in mechanism rotations. This can be the position of a remote sensor and is affected by the RotorToSensorRatio and SensorToMechanismRatio configs, as well as calls to setPosition.",
+      "Units": "rotations"
+    },
+    {
+      "Id": 1791,
+      "Name": "Acceleration",
+      "Summary": "Acceleration of the device in mechanism rotations per second\u00b2. This can be the acceleration of a remote sensor and is affected by the RotorToSensorRatio and SensorToMechanismRatio configs.",
+      "Units": "rotations per second\u00b2"
+    },
+    {
+      "Id": 1799,
+      "Name": "ControlMode",
+      "Summary": "The active control mode of the motor controller.",
+      "Units": ""
+    },
+    {
+      "Id": 1805,
+      "Name": "MotionMagicAtTarget",
+      "Summary": "Check if the Motion Magic\u00ae profile has reached the target. This is equivalent to checking that MotionMagicIsRunning, the ClosedLoopReference is the target, and the ClosedLoopReferenceSlope is 0.",
+      "Units": ""
+    },
+    {
+      "Id": 1806,
+      "Name": "MotionMagicIsRunning",
+      "Summary": "Check if Motion Magic\u00ae is running.  This is equivalent to checking that the reported control mode is a Motion Magic\u00ae based mode.",
+      "Units": ""
+    },
+    {
+      "Id": 1807,
+      "Name": "RobotEnable",
+      "Summary": "Indicates if the robot is enabled.",
+      "Units": ""
+    },
+    {
+      "Id": 1808,
+      "Name": "DeviceEnable",
+      "Summary": "Indicates if device is actuator enabled.",
+      "Units": ""
+    },
+    {
+      "Id": 1826,
+      "Name": "ClosedLoopSlot",
+      "Summary": "The slot that the closed-loop PID is using.",
+      "Units": ""
+    },
+    {
+      "Id": 1830,
+      "Name": "MotorOutputStatus",
+      "Summary": "Assess the status of the motor output with respect to load and supply.",
+      "Units": ""
+    },
+    {
+      "Id": 1838,
+      "Name": "DifferentialControlMode",
+      "Summary": "The active control mode of the differential controller.",
+      "Units": ""
+    },
+    {
+      "Id": 1846,
+      "Name": "DifferentialAverageVelocity",
+      "Summary": "Average component of the differential velocity of device.",
+      "Units": "rotations per second"
+    },
+    {
+      "Id": 1847,
+      "Name": "DifferentialAveragePosition",
+      "Summary": "Average component of the differential position of device.",
+      "Units": "rotations"
+    },
+    {
+      "Id": 1850,
+      "Name": "DifferentialDifferenceVelocity",
+      "Summary": "Difference component of the differential velocity of device.",
+      "Units": "rotations per second"
+    },
+    {
+      "Id": 1851,
+      "Name": "DifferentialDifferencePosition",
+      "Summary": "Difference component of the differential position of device.",
+      "Units": "rotations"
+    },
+    {
+      "Id": 1869,
+      "Name": "DifferentialClosedLoopSlot",
+      "Summary": "The slot that the closed-loop differential PID is using.",
+      "Units": ""
+    },
+    {
+      "Id": 1874,
+      "Name": "MotorKT",
+      "Summary": "The torque constant (K_T) of the motor.",
+      "Units": "Nm/A"
+    },
+    {
+      "Id": 1875,
+      "Name": "MotorKV",
+      "Summary": "The velocity constant (K_V) of the motor.",
+      "Units": "RPM/V"
+    },
+    {
+      "Id": 1876,
+      "Name": "MotorStallCurrent",
+      "Summary": "The stall current of the motor at 12 V output.",
+      "Units": "A"
+    },
+    {
+      "Id": 1963,
+      "Name": "BridgeOutput",
+      "Summary": "The applied output of the bridge.",
+      "Units": ""
+    },
+    {
+      "Id": 2052,
+      "Name": "IsProLicensed",
+      "Summary": "Whether the device is Phoenix Pro licensed.",
+      "Units": ""
+    },
+    {
+      "Id": 2091,
+      "Name": "AncillaryDeviceTemp",
+      "Summary": "Temperature of device from second sensor.",
+      "Units": "\u2103"
+    },
+    {
+      "Id": 2117,
+      "Name": "ConnectedMotor",
+      "Summary": "The type of motor attached to the Talon.",
+      "Units": ""
+    },
+    {
+      "Id": 10001,
+      "Name": "Fault_Hardware",
+      "Summary": "Hardware fault occurred",
+      "Units": ""
+    },
+    {
+      "Id": 10002,
+      "Name": "StickyFault_Hardware",
+      "Summary": "Hardware fault occurred",
+      "Units": ""
+    },
+    {
+      "Id": 10004,
+      "Name": "Fault_ProcTemp",
+      "Summary": "Processor temperature exceeded limit",
+      "Units": ""
+    },
+    {
+      "Id": 10005,
+      "Name": "StickyFault_ProcTemp",
+      "Summary": "Processor temperature exceeded limit",
+      "Units": ""
+    },
+    {
+      "Id": 10007,
+      "Name": "Fault_DeviceTemp",
+      "Summary": "Device temperature exceeded limit",
+      "Units": ""
+    },
+    {
+      "Id": 10008,
+      "Name": "StickyFault_DeviceTemp",
+      "Summary": "Device temperature exceeded limit",
+      "Units": ""
+    },
+    {
+      "Id": 10010,
+      "Name": "Fault_Undervoltage",
+      "Summary": "Device supply voltage dropped to near brownout levels",
+      "Units": ""
+    },
+    {
+      "Id": 10011,
+      "Name": "StickyFault_Undervoltage",
+      "Summary": "Device supply voltage dropped to near brownout levels",
+      "Units": ""
+    },
+    {
+      "Id": 10013,
+      "Name": "Fault_BootDuringEnable",
+      "Summary": "Device boot while detecting the enable signal",
+      "Units": ""
+    },
+    {
+      "Id": 10014,
+      "Name": "StickyFault_BootDuringEnable",
+      "Summary": "Device boot while detecting the enable signal",
+      "Units": ""
+    },
+    {
+      "Id": 10016,
+      "Name": "Fault_UnlicensedFeatureInUse",
+      "Summary": "An unlicensed feature is in use, device may not behave as expected.",
+      "Units": ""
+    },
+    {
+      "Id": 10017,
+      "Name": "StickyFault_UnlicensedFeatureInUse",
+      "Summary": "An unlicensed feature is in use, device may not behave as expected.",
+      "Units": ""
+    },
+    {
+      "Id": 10049,
+      "Name": "Fault_BridgeBrownout",
+      "Summary": "Bridge was disabled most likely due to supply voltage dropping too low.",
+      "Units": ""
+    },
+    {
+      "Id": 10050,
+      "Name": "StickyFault_BridgeBrownout",
+      "Summary": "Bridge was disabled most likely due to supply voltage dropping too low.",
+      "Units": ""
+    },
+    {
+      "Id": 10052,
+      "Name": "Fault_RemoteSensorReset",
+      "Summary": "The remote sensor has reset.",
+      "Units": ""
+    },
+    {
+      "Id": 10053,
+      "Name": "StickyFault_RemoteSensorReset",
+      "Summary": "The remote sensor has reset.",
+      "Units": ""
+    },
+    {
+      "Id": 10055,
+      "Name": "Fault_MissingDifferentialFX",
+      "Summary": "The remote Talon used for differential control is not present on CAN Bus.",
+      "Units": ""
+    },
+    {
+      "Id": 10056,
+      "Name": "StickyFault_MissingDifferentialFX",
+      "Summary": "The remote Talon used for differential control is not present on CAN Bus.",
+      "Units": ""
+    },
+    {
+      "Id": 10058,
+      "Name": "Fault_RemoteSensorPosOverflow",
+      "Summary": "The remote sensor position has overflowed. Because of the nature of remote sensors, it is possible for the remote sensor position to overflow beyond what is supported by the status signal frame. However, this is rare and cannot occur over the course of an FRC match under normal use.",
+      "Units": ""
+    },
+    {
+      "Id": 10059,
+      "Name": "StickyFault_RemoteSensorPosOverflow",
+      "Summary": "The remote sensor position has overflowed. Because of the nature of remote sensors, it is possible for the remote sensor position to overflow beyond what is supported by the status signal frame. However, this is rare and cannot occur over the course of an FRC match under normal use.",
+      "Units": ""
+    },
+    {
+      "Id": 10061,
+      "Name": "Fault_OverSupplyV",
+      "Summary": "Supply Voltage has exceeded the maximum voltage rating of device.",
+      "Units": ""
+    },
+    {
+      "Id": 10062,
+      "Name": "StickyFault_OverSupplyV",
+      "Summary": "Supply Voltage has exceeded the maximum voltage rating of device.",
+      "Units": ""
+    },
+    {
+      "Id": 10064,
+      "Name": "Fault_UnstableSupplyV",
+      "Summary": "Supply Voltage is unstable.  Ensure you are using a battery and current limited power supply.",
+      "Units": ""
+    },
+    {
+      "Id": 10065,
+      "Name": "StickyFault_UnstableSupplyV",
+      "Summary": "Supply Voltage is unstable.  Ensure you are using a battery and current limited power supply.",
+      "Units": ""
+    },
+    {
+      "Id": 10067,
+      "Name": "Fault_ReverseHardLimit",
+      "Summary": "Reverse limit switch has been asserted.  Output is set to neutral.",
+      "Units": ""
+    },
+    {
+      "Id": 10068,
+      "Name": "StickyFault_ReverseHardLimit",
+      "Summary": "Reverse limit switch has been asserted.  Output is set to neutral.",
+      "Units": ""
+    },
+    {
+      "Id": 10070,
+      "Name": "Fault_ForwardHardLimit",
+      "Summary": "Forward limit switch has been asserted.  Output is set to neutral.",
+      "Units": ""
+    },
+    {
+      "Id": 10071,
+      "Name": "StickyFault_ForwardHardLimit",
+      "Summary": "Forward limit switch has been asserted.  Output is set to neutral.",
+      "Units": ""
+    },
+    {
+      "Id": 10073,
+      "Name": "Fault_ReverseSoftLimit",
+      "Summary": "Reverse soft limit has been asserted.  Output is set to neutral.",
+      "Units": ""
+    },
+    {
+      "Id": 10074,
+      "Name": "StickyFault_ReverseSoftLimit",
+      "Summary": "Reverse soft limit has been asserted.  Output is set to neutral.",
+      "Units": ""
+    },
+    {
+      "Id": 10076,
+      "Name": "Fault_ForwardSoftLimit",
+      "Summary": "Forward soft limit has been asserted.  Output is set to neutral.",
+      "Units": ""
+    },
+    {
+      "Id": 10077,
+      "Name": "StickyFault_ForwardSoftLimit",
+      "Summary": "Forward soft limit has been asserted.  Output is set to neutral.",
+      "Units": ""
+    },
+    {
+      "Id": 10079,
+      "Name": "Fault_MissingSoftLimitRemote",
+      "Summary": "The remote soft limit device is not present on CAN Bus.",
+      "Units": ""
+    },
+    {
+      "Id": 10080,
+      "Name": "StickyFault_MissingSoftLimitRemote",
+      "Summary": "The remote soft limit device is not present on CAN Bus.",
+      "Units": ""
+    },
+    {
+      "Id": 10082,
+      "Name": "Fault_MissingHardLimitRemote",
+      "Summary": "The remote limit switch device is not present on CAN Bus.",
+      "Units": ""
+    },
+    {
+      "Id": 10083,
+      "Name": "StickyFault_MissingHardLimitRemote",
+      "Summary": "The remote limit switch device is not present on CAN Bus.",
+      "Units": ""
+    },
+    {
+      "Id": 10085,
+      "Name": "Fault_RemoteSensorDataInvalid",
+      "Summary": "The remote sensor's data is no longer trusted. This can happen if the remote sensor disappears from the CAN bus or if the remote sensor indicates its data is no longer valid, such as when a CANcoder's magnet strength falls into the \"red\" range.",
+      "Units": ""
+    },
+    {
+      "Id": 10086,
+      "Name": "StickyFault_RemoteSensorDataInvalid",
+      "Summary": "The remote sensor's data is no longer trusted. This can happen if the remote sensor disappears from the CAN bus or if the remote sensor indicates its data is no longer valid, such as when a CANcoder's magnet strength falls into the \"red\" range.",
+      "Units": ""
+    },
+    {
+      "Id": 10088,
+      "Name": "Fault_FusedSensorOutOfSync",
+      "Summary": "The remote sensor used for fusion has fallen out of sync to the local sensor. A re-synchronization has occurred, which may cause a discontinuity. This typically happens if there is significant slop in the mechanism, or if the RotorToSensorRatio configuration parameter is incorrect.",
+      "Units": ""
+    },
+    {
+      "Id": 10089,
+      "Name": "StickyFault_FusedSensorOutOfSync",
+      "Summary": "The remote sensor used for fusion has fallen out of sync to the local sensor. A re-synchronization has occurred, which may cause a discontinuity. This typically happens if there is significant slop in the mechanism, or if the RotorToSensorRatio configuration parameter is incorrect.",
+      "Units": ""
+    },
+    {
+      "Id": 10091,
+      "Name": "Fault_StatorCurrLimit",
+      "Summary": "Stator current limit occured.",
+      "Units": ""
+    },
+    {
+      "Id": 10092,
+      "Name": "StickyFault_StatorCurrLimit",
+      "Summary": "Stator current limit occured.",
+      "Units": ""
+    },
+    {
+      "Id": 10094,
+      "Name": "Fault_SupplyCurrLimit",
+      "Summary": "Supply current limit occured.",
+      "Units": ""
+    },
+    {
+      "Id": 10095,
+      "Name": "StickyFault_SupplyCurrLimit",
+      "Summary": "Supply current limit occured.",
+      "Units": ""
+    },
+    {
+      "Id": 10097,
+      "Name": "Fault_UsingFusedCANcoderWhileUnlicensed",
+      "Summary": "Using Fused CANcoder feature while unlicensed. Device has fallen back to remote CANcoder.",
+      "Units": ""
+    },
+    {
+      "Id": 10098,
+      "Name": "StickyFault_UsingFusedCANcoderWhileUnlicensed",
+      "Summary": "Using Fused CANcoder feature while unlicensed. Device has fallen back to remote CANcoder.",
+      "Units": ""
+    },
+    {
+      "Id": 10100,
+      "Name": "Fault_StaticBrakeDisabled",
+      "Summary": "Static brake was momentarily disabled due to excessive braking current while disabled.",
+      "Units": ""
+    },
+    {
+      "Id": 10101,
+      "Name": "StickyFault_StaticBrakeDisabled",
+      "Summary": "Static brake was momentarily disabled due to excessive braking current while disabled.",
+      "Units": ""
+    },
+    {
+      "Id": 10145,
+      "Name": "Fault_RotorFault1",
+      "Summary": "Trips if a major mechanical or ESD event caused a brief loss of position data triggering a recovery while not in motion. If the event occurs often, inspect for excess axial force or sources of ESD at the rotor.",
+      "Units": ""
+    },
+    {
+      "Id": 10146,
+      "Name": "StickyFault_RotorFault1",
+      "Summary": "Trips if a major mechanical or ESD event caused a brief loss of position data triggering a recovery while not in motion. If the event occurs often, inspect for excess axial force or sources of ESD at the rotor.",
+      "Units": ""
+    },
+    {
+      "Id": 10148,
+      "Name": "Fault_RotorFault2",
+      "Summary": "Trips if a major mechanical or ESD event caused a brief loss of position data triggering a recovery while in motion. If the event occurs often, inspect for excess axial force or sources of ESD at the rotor.",
+      "Units": ""
+    },
+    {
+      "Id": 10149,
+      "Name": "StickyFault_RotorFault2",
+      "Summary": "Trips if a major mechanical or ESD event caused a brief loss of position data triggering a recovery while in motion. If the event occurs often, inspect for excess axial force or sources of ESD at the rotor.",
+      "Units": ""
+    },
+    {
+      "Id": 1817,
+      "Name": "PIDDutyCycle_ProportionalOutput",
+      "Summary": "Proportional output of PID controller when PID'ing under a DutyCycle Request.",
+      "Units": "fractional"
+    },
+    {
+      "Id": 1818,
+      "Name": "PIDMotorVoltage_ProportionalOutput",
+      "Summary": "Proportional output of PID controller when PID'ing under a Voltage Request.",
+      "Units": "V"
+    },
+    {
+      "Id": 1819,
+      "Name": "PIDTorqueCurrent_ProportionalOutput",
+      "Summary": "Proportional output of PID controller when PID'ing under a TorqueCurrent Request.",
+      "Units": "A"
+    },
+    {
+      "Id": 1793,
+      "Name": "PIDDutyCycle_IntegratedAccum",
+      "Summary": "Integrated Accumulator of PID controller when PID'ing under a DutyCycle Request.",
+      "Units": "fractional"
+    },
+    {
+      "Id": 1794,
+      "Name": "PIDMotorVoltage_IntegratedAccum",
+      "Summary": "Integrated Accumulator of PID controller when PID'ing under a Voltage Request.",
+      "Units": "V"
+    },
+    {
+      "Id": 1795,
+      "Name": "PIDTorqueCurrent_IntegratedAccum",
+      "Summary": "Integrated Accumulator of PID controller when PID'ing under a TorqueCurrent Request.",
+      "Units": "A"
+    },
+    {
+      "Id": 1796,
+      "Name": "PIDDutyCycle_FeedForward",
+      "Summary": "Feedforward passed to PID controller.",
+      "Units": "fractional"
+    },
+    {
+      "Id": 1797,
+      "Name": "PIDMotorVoltage_FeedForward",
+      "Summary": "Feedforward passed to PID controller.",
+      "Units": "V"
+    },
+    {
+      "Id": 1798,
+      "Name": "PIDTorqueCurrent_FeedForward",
+      "Summary": "Feedforward passed to PID controller.",
+      "Units": "A"
+    },
+    {
+      "Id": 1820,
+      "Name": "PIDDutyCycle_DerivativeOutput",
+      "Summary": "Derivative Output of PID controller when PID'ing under a DutyCycle Request.",
+      "Units": "fractional"
+    },
+    {
+      "Id": 1821,
+      "Name": "PIDMotorVoltage_DerivativeOutput",
+      "Summary": "Derivative Output of PID controller when PID'ing under a Voltage Request.",
+      "Units": "V"
+    },
+    {
+      "Id": 1822,
+      "Name": "PIDTorqueCurrent_DerivativeOutput",
+      "Summary": "Derivative Output of PID controller when PID'ing under a TorqueCurrent Request.",
+      "Units": "A"
+    },
+    {
+      "Id": 1823,
+      "Name": "PIDDutyCycle_Output",
+      "Summary": "Output of PID controller when PID'ing under a DutyCycle Request.",
+      "Units": "fractional"
+    },
+    {
+      "Id": 1824,
+      "Name": "PIDMotorVoltage_Output",
+      "Summary": "Output of PID controller when PID'ing under a Voltage Request.",
+      "Units": "V"
+    },
+    {
+      "Id": 1825,
+      "Name": "PIDTorqueCurrent_Output",
+      "Summary": "Output of PID controller when PID'ing under a TorqueCurrent Request.",
+      "Units": "A"
+    },
+    {
+      "Id": 1810,
+      "Name": "PIDPosition_Reference",
+      "Summary": "Input position of PID controller when PID'ing to a position.",
+      "Units": "rotations"
+    },
+    {
+      "Id": 1811,
+      "Name": "PIDVelocity_Reference",
+      "Summary": "Input velocity of PID controller when PID'ing to a velocity.",
+      "Units": "rotations per second"
+    },
+    {
+      "Id": 1827,
+      "Name": "PIDPosition_ReferenceSlope",
+      "Summary": "Change in input (velocity) of PID controller when PID'ing to a position.",
+      "Units": "rotations per second"
+    },
+    {
+      "Id": 1828,
+      "Name": "PIDVelocity_ReferenceSlope",
+      "Summary": "Change in input (acceleration) of PID controller when PID'ing to a velocity.",
+      "Units": "rotations per second\u00b2"
+    },
+    {
+      "Id": 1812,
+      "Name": "PIDPosition_ClosedLoopError",
+      "Summary": "The difference between target position and current position.",
+      "Units": "rotations"
+    },
+    {
+      "Id": 1813,
+      "Name": "PIDVelocity_ClosedLoopError",
+      "Summary": "The difference between target velocity and current velocity.",
+      "Units": "rotations per second"
+    },
+    {
+      "Id": 1833,
+      "Name": "DifferentialDutyCycle",
+      "Summary": "The calculated motor duty cycle for differential followers.",
+      "Units": "fractional"
+    },
+    {
+      "Id": 1834,
+      "Name": "DifferentialMotorVoltage",
+      "Summary": "The calculated motor voltage for differential followers.",
+      "Units": "V"
+    },
+    {
+      "Id": 1835,
+      "Name": "DifferentialTorqueCurrent",
+      "Summary": "The calculated motor torque current for differential followers.",
+      "Units": "A"
+    },
+    {
+      "Id": 1860,
+      "Name": "Differential_PIDDutyCycle_ProportionalOutput",
+      "Summary": "Proportional output of differential PID controller when PID'ing under a DutyCycle Request.",
+      "Units": "fractional"
+    },
+    {
+      "Id": 1861,
+      "Name": "Differential_PIDMotorVoltage_ProportionalOutput",
+      "Summary": "Proportional output of differential PID controller when PID'ing under a Voltage Request.",
+      "Units": "V"
+    },
+    {
+      "Id": 1862,
+      "Name": "Differential_PIDTorqueCurrent_ProportionalOutput",
+      "Summary": "Proportional output of differential PID controller when PID'ing under a TorqueCurrent Request.",
+      "Units": "A"
+    },
+    {
+      "Id": 1839,
+      "Name": "Differential_PIDDutyCycle_IntegratedAccum",
+      "Summary": "Integrated Accumulator of differential PID controller when PID'ing under a DutyCycle Request.",
+      "Units": "fractional"
+    },
+    {
+      "Id": 1840,
+      "Name": "Differential_PIDMotorVoltage_IntegratedAccum",
+      "Summary": "Integrated Accumulator of differential PID controller when PID'ing under a Voltage Request.",
+      "Units": "V"
+    },
+    {
+      "Id": 1841,
+      "Name": "Differential_PIDTorqueCurrent_IntegratedAccum",
+      "Summary": "Integrated Accumulator of differential PID controller when PID'ing under a TorqueCurrent Request.",
+      "Units": "A"
+    },
+    {
+      "Id": 1842,
+      "Name": "Differential_PIDDutyCycle_FeedForward",
+      "Summary": "Feedforward passed to differential PID controller.",
+      "Units": "fractional"
+    },
+    {
+      "Id": 1843,
+      "Name": "Differential_PIDMotorVoltage_FeedForward",
+      "Summary": "Feedforward passed to differential PID controller.",
+      "Units": "V"
+    },
+    {
+      "Id": 1844,
+      "Name": "Differential_PIDTorqueCurrent_FeedForward",
+      "Summary": "Feedforward passed to differential PID controller.",
+      "Units": "A"
+    },
+    {
+      "Id": 1863,
+      "Name": "Differential_PIDDutyCycle_DerivativeOutput",
+      "Summary": "Derivative Output of differential PID controller when PID'ing under a DutyCycle Request.",
+      "Units": "fractional"
+    },
+    {
+      "Id": 1864,
+      "Name": "Differential_PIDMotorVoltage_DerivativeOutput",
+      "Summary": "Derivative Output of differential PID controller when PID'ing under a Voltage Request.",
+      "Units": "V"
+    },
+    {
+      "Id": 1865,
+      "Name": "Differential_PIDTorqueCurrent_DerivativeOutput",
+      "Summary": "Derivative Output of differential PID controller when PID'ing under a TorqueCurrent Request.",
+      "Units": "A"
+    },
+    {
+      "Id": 1866,
+      "Name": "Differential_PIDDutyCycle_Output",
+      "Summary": "Output of differential PID controller when PID'ing under a DutyCycle Request.",
+      "Units": "fractional"
+    },
+    {
+      "Id": 1867,
+      "Name": "Differential_PIDMotorVoltage_Output",
+      "Summary": "Output of differential PID controller when PID'ing under a Voltage Request.",
+      "Units": "V"
+    },
+    {
+      "Id": 1868,
+      "Name": "Differential_PIDTorqueCurrent_Output",
+      "Summary": "Output of differential PID controller when PID'ing under a TorqueCurrent Request.",
+      "Units": "A"
+    },
+    {
+      "Id": 1853,
+      "Name": "Differential_PIDPosition_Reference",
+      "Summary": "Input position of differential PID controller when PID'ing to a differential position.",
+      "Units": "rotations"
+    },
+    {
+      "Id": 1854,
+      "Name": "Differential_PIDVelocity_Reference",
+      "Summary": "Input velocity of differential PID controller when PID'ing to a differential velocity.",
+      "Units": "rotations per second"
+    },
+    {
+      "Id": 1870,
+      "Name": "Differential_PIDPosition_ReferenceSlope",
+      "Summary": "Change in input (velocity) of differential PID controller when PID'ing to a differential position.",
+      "Units": "rotations per second"
+    },
+    {
+      "Id": 1871,
+      "Name": "Differential_PIDVelocity_ReferenceSlope",
+      "Summary": "Change in input (acceleration) of differential PID controller when PID'ing to a differential velocity.",
+      "Units": "rotations per second\u00b2"
+    },
+    {
+      "Id": 1855,
+      "Name": "Differential_PIDPosition_ClosedLoopError",
+      "Summary": "The difference between target differential position and current differential position.",
+      "Units": "rotations"
+    },
+    {
+      "Id": 1856,
+      "Name": "Differential_PIDVelocity_ClosedLoopError",
+      "Summary": "The difference between target differential velocity and current differential velocity.",
+      "Units": "rotations per second"
+    }
+  ]
+}

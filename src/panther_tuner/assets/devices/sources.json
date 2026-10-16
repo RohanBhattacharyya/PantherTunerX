@@ -1,0 +1,50 @@
+{
+  "talon-fx": {
+    "file": "talon-fx.png",
+    "product": "Drive & Steering Motors - Kraken X60",
+    "page": "https://store.ctr-electronics.com/products/kraken-x60",
+    "image": "https://cdn.shopify.com/s/files/1/0668/2981/1885/files/Kraken-X60-brushless-motor-powered-by-Talon-FX-front-angle.png?v=1756323105&width=384"
+  },
+  "talon-fxs": {
+    "file": "talon-fxs.png",
+    "product": "Talon FXS",
+    "page": "https://store.ctr-electronics.com/products/talon-fxs",
+    "image": "https://cdn.shopify.com/s/files/1/0668/2981/1885/files/Talon-FXS-versatile-high-performance-standalone-motor-controller.png?v=1759516130&width=384"
+  },
+  "cancoder": {
+    "file": "cancoder.png",
+    "product": "CANcoder\u00ae- Unwired, Wired & Molex\u00ae SL\u2122 options",
+    "page": "https://store.ctr-electronics.com/products/cancoder",
+    "image": "https://cdn.shopify.com/s/files/1/0668/2981/1885/files/CANCoder-wired-rotary-magnetic-encoder-robotics-automation-product.png?v=1756386105&width=384"
+  },
+  "pigeon2": {
+    "file": "pigeon2.png",
+    "product": "Pigeon 2.0",
+    "page": "https://store.ctr-electronics.com/products/pigeon-2",
+    "image": "https://cdn.shopify.com/s/files/1/0668/2981/1885/files/Pigeon-2.0-9-Degrees-of-Freedom-IMU_robotics_FRC_orientation_data.png?v=1756397345&width=384"
+  },
+  "canrange": {
+    "file": "canrange.png",
+    "product": "CANrange",
+    "page": "https://store.ctr-electronics.com/products/canrange",
+    "image": "https://cdn.shopify.com/s/files/1/0668/2981/1885/files/CANrange-Time-of-Flight-Proximity-Sensor-Robotics-Automation.png?v=1762452119&width=384"
+  },
+  "candi": {
+    "file": "candi.png",
+    "product": "CANdi\u00ae",
+    "page": "https://store.ctr-electronics.com/products/candi",
+    "image": "https://cdn.shopify.com/s/files/1/0668/2981/1885/files/CTR_CANdi_digital_signals_into_CAN_bus_networks_1.png?v=1762548115&width=384"
+  },
+  "candle": {
+    "file": "candle.png",
+    "product": "CANdle",
+    "page": "https://store.ctr-electronics.com/products/candle",
+    "image": "https://cdn.shopify.com/s/files/1/0668/2981/1885/files/CANdle-high-efficiency-DC-voltage-regulator-LED-controller-robotics-FRC.png?v=1774883756&width=384"
+  },
+  "falcon500": {
+    "file": "falcon500.png",
+    "product": "Falcon 500 Powered by Talon FX",
+    "page": "https://store.ctr-electronics.com/products/falcon-500-powered-by-talon-fx",
+    "image": "https://cdn.shopify.com/s/files/1/0668/2981/1885/files/3__19352_1673993701_1280_1280.png?v=1723228114&width=384"
+  }
+}

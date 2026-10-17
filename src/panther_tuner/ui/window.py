@@ -50,7 +50,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(f"Panther Tuner X · {__version__}")
         self.resize(1662, 1114)
         self.setMinimumSize(1040, 720)
-        self.control_token = 0
         self.active_control = None
         self.heartbeats = set()
         self.backend = None
@@ -256,95 +255,74 @@ class MainWindow(QMainWindow):
         if index == 2:
             self.refresh_history()
 
-    def arm_controls(self):
-        if not self.backend or not self.device or self.operation:
+    def set_control_enabled(self, enabled):
+        if not enabled:
+            self.stop_controls()
             return
-        if not self.confirm(
-            "Enable control requests?",
-            f"Arm {self.device.name} (ID {self.device.id}) for control?\n\n"
-            "Applying a request can move the mechanism. Secure the robot, clear the area, "
-            "and ensure an independent emergency stop is available.\n\n"
-            "FRC requires Driver Station enable. Network targets outside FRC require "
-            "their program to feed Phoenix enable. Stop, leaving Control, or a lost "
-            "request heartbeat disables this control session.\n\n"
-            "Enable only arms the editor. Press Apply to send output.",
-        ):
-            return
-        self.stop_controls()
-        token = self.control_token
-        backend, device = self.backend, self.device
-
-        def armed(_):
-            if token == self.control_token and device == self.device:
-                self.control_panel.set_armed(True)
-                self.log_event("Control editor armed; output awaits Apply")
-
-        self.run(lambda: backend.assert_target(device), armed, "Verify control target")
-
-    def apply_control(self):
-        if not self.control_panel.armed or not self.backend or not self.device:
+        if self.active_control or not self.backend or not self.device or self.operation:
             return
         try:
             mode, values = self.control_panel.staged()
         except TunerError as e:
             QMessageBox.warning(self, "Invalid control request", str(e))
             return
-        if self.active_control:
-            self.active_control.update(mode, values)
-            return
         backend, device = self.backend, self.device
         renew = backend.enable_lease if isinstance(backend, LocalBackend) else None
         heartbeat = ControlHeartbeat(backend, device, mode, values, renew, self)
-        heartbeat.acknowledged.connect(self.control_acknowledged)
-        heartbeat.lapsed.connect(self.control_lapsed)
+        heartbeat.status.connect(self.control_status)
         heartbeat.ended.connect(self.control_ended)
         self.active_control = heartbeat
         self.heartbeats.add(heartbeat)
+        self.control_panel.set_output_enabled(True)
+        self.log_event(f"Control enabled for {device.name} (ID {device.id})")
         heartbeat.start()
+
+    def control_request_changed(self):
+        if not self.active_control:
+            return
+        try:
+            mode, values = self.control_panel.staged()
+        except TunerError as e:
+            self.control_panel.note.setText(f"Invalid value, still sending the previous request: {e}")
+            return
+        self.active_control.update(mode, values)
 
     def control_tick(self):
         """Feed the GUI liveness deadline; requests are sent by the heartbeat thread."""
         if not self.active_control:
             return
-        if self.pages.currentIndex() != 1 or self.left_tabs.currentIndex() != 1:
+        if self.pages.currentIndex() != 1:
             self.stop_controls()
             return
         self.active_control.feed()
 
-    def control_acknowledged(self, heartbeat, mode):
-        if heartbeat is self.active_control:
-            self.control_panel.note.setText(
-                f"{mode} acknowledged · heartbeat active. Enable/limits may inhibit output; inspect telemetry."
-            )
-
-    def control_lapsed(self, heartbeat, gap):
-        if heartbeat is self.active_control:
-            message = (
-                f"Control heartbeat gap of {gap * 1000:.0f} ms: "
-                "the robot program may have briefly reclaimed output"
-            )
-            self.log_event(message)
-            self.control_panel.note.setText(message + ". Heartbeat resumed.")
+    def control_status(self, heartbeat, healthy, message):
+        if heartbeat is not self.active_control:
+            return
+        self.control_panel.note.setText(message if healthy else "⚠ " + message)
+        if not healthy or "gap" in message:
+            self.log_event("Control: " + message)
 
     def control_ended(self, heartbeat, error, stop_error):
         self.heartbeats.discard(heartbeat)
         if stop_error:
-            self.log_event("Stop request failed; control heartbeat is stopped: " + stop_error)
+            self.log_event(
+                "Disable request failed; the server watchdog will neutralize output: " + stop_error
+            )
         else:
-            self.log_event("Control stopped")
+            self.log_event("Control disabled")
         if heartbeat is self.active_control:
             self.stop_controls()
             if error:
-                self.log_event("Control stopped: " + error)
-                self.control_panel.note.setText("CONTROL STOPPED: " + error)
+                self.log_event("Control could not start: " + error)
+                self.control_panel.note.setText("Control could not start: " + error)
 
     def stop_controls(self):
         heartbeat = self.active_control
-        self.control_token += 1
         self.active_control = None
-        self.control_panel.set_armed(False)
+        self.control_panel.set_output_enabled(False)
         if heartbeat:
-            # The heartbeat thread sends Stop after its last control request.
+            # The heartbeat thread sends the disable request after its last control request.
             heartbeat.stop()
         if isinstance(self.backend, LocalBackend):
             self.backend.enable_lease(False)
@@ -588,9 +566,8 @@ class MainWindow(QMainWindow):
         il.addWidget(button("Copy device details", self.copy_details))
         self.left_tabs.addTab(info, icon("info", "#ffffff"), "Info")
         self.control_panel = ControlPanel()
-        self.control_panel.arm_requested.connect(self.arm_controls)
-        self.control_panel.apply_requested.connect(self.apply_control)
-        self.control_panel.stop_requested.connect(self.stop_controls)
+        self.control_panel.enable_requested.connect(self.set_control_enabled)
+        self.control_panel.request_changed.connect(self.control_request_changed)
         self.left_tabs.addTab(self.control_panel, icon("control", "#ffffff"), "Control")
         self.plotter = Plotter()
         self.plotter.export_requested.connect(self.export_csv)
@@ -598,7 +575,6 @@ class MainWindow(QMainWindow):
         self.plotter.pause_changed.connect(self.plot_pause_changed)
         self.plotter.selection_changed.connect(self.plot_selection_changed)
         self.left_tabs.addTab(self.plotter.signal_panel, icon("plot", "#ffffff"), "Signals")
-        self.left_tabs.currentChanged.connect(lambda i: self.stop_controls() if i != 1 else None)
         self.workspace_split.addWidget(self.left_tabs)
         self.detail_split = QSplitter(Qt.Orientation.Vertical)
         self.tabs = QTabWidget()
@@ -695,8 +671,9 @@ class MainWindow(QMainWindow):
             "Firmware flashing, licenses, automatic server deployment, Phoenix 5 configuration, Pigeon calibration, and generators are not implemented. "
             "Control modes are derived from server metadata; simulated duty output and watchdogs are verified, but physical motors and other modes require validation.\n\n"
             "SAFETY & OWNERSHIP\n\n"
-            "Every device mutation requires explicit confirmation. Blink also clears sticky faults. Refresh before editing and review changes with the robot disabled. "
-            "Control requires Enable confirmation followed by Apply. Stop or leaving Control revokes the heartbeat. Keep an independent emergency stop available. "
+            "Configuration, name, ID and blink changes require explicit confirmation. Blink also clears sticky faults. Refresh before editing and review changes with the robot disabled. "
+            "Control works like Tuner X: ENABLED sends the request continuously and edits apply immediately; DISABLED, leaving the device, or disconnecting neutralizes output. "
+            "FRC-locked devices also require Driver Station enable. Keep an independent emergency stop available. "
             "A failed or timed-out write can have partially applied; refresh to inspect actual state.\n\n"
             "Panther Tuner X is not affiliated with CTR Electronics. CTRE and Phoenix are their respective owners' trademarks. "
             "Application code is MIT licensed. The separately installed CTRE SDK retains CTRE's license. "
@@ -835,7 +812,7 @@ class MainWindow(QMainWindow):
                 return
             self.pending_discovery = False
             if error:
-                self.stop_controls()
+                # An enabled control session keeps retrying and reports its own status.
                 self.discovery_note.setText("Diagnostics unavailable · " + str(error))
                 self.log_event("Connection error: " + str(error))
             else:

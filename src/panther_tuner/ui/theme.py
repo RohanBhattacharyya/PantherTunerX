@@ -30,8 +30,10 @@ QPushButton:disabled { color: #77747d; background: #29272e; }
 QPushButton#primary { color: #141414; background: #f3e6a4; font-weight: 600; }
 QPushButton#primary:hover { background: #fff1bd; }
 QPushButton#primary:disabled { color: #9e977c; background: #454237; }
-QPushButton#danger { background: #b83b41; color: white; font-weight: 600; }
-QPushButton#danger:hover { background: #d64d51; }
+QPushButton#disabled { background: #b83b41; color: white; font-weight: 700; font-size: 17px; }
+QPushButton#disabled:hover { background: #d64d51; }
+QPushButton#enabled { background: #2e8b47; color: white; font-weight: 700; font-size: 17px; }
+QPushButton#enabled:hover { background: #38a656; }
 QPushButton#icon { padding: 0; background: transparent; border-radius: 0; }
 QPushButton#icon:hover { background: #37343c; }
 QPushButton#icon::menu-indicator { image: none; width: 0; }

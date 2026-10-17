@@ -98,108 +98,6 @@ def test_window_simulation_workflow(qtbot, simulation, tmp_path):
     w.close()
 
 
-def test_control_editor_requires_enable_apply_and_stops_on_navigation(qtbot):
-    from panther_tuner.models import Device
-
-    w = MainWindow()
-    qtbot.addWidget(w)
-    calls = []
-
-    class Backend:
-        def assert_target(self, device):
-            calls.append("verify")
-
-        def control(self, device, mode, values, *, confirmed=False):
-            assert confirmed
-            calls.append((mode, values.copy()))
-            return {}
-
-        def stop_control(self, device):
-            calls.append("stop")
-
-        def close(self):
-            pass
-
-    w.backend = Backend()
-    w.device = Device("Talon FX vers. C", 1, "", "Test", "26.3.0")
-    w.discovery_timer.stop()
-    w.poll_timer.stop()
-    w.control_panel.set_catalog(
-        {
-            "DutyCycleOut": {
-                "Summary": "Duty cycle",
-                "ConstructorParams": [{"Name": "Output", "Type": "double", "Min": "-1", "Max": "1"}],
-            }
-        }
-    )
-    w.navigate(1)
-    w.left_tabs.setCurrentIndex(1)
-    w.control_panel.editors["Output"].setText("0.2")
-    w.apply_control()
-    assert not calls
-    w.confirm = lambda *_: False
-    w.arm_controls()
-    assert not calls
-    w.confirm = lambda *_: True
-    w.arm_controls()
-    qtbot.waitUntil(lambda: w.control_panel.armed)
-    assert calls == ["verify"]
-    w.apply_control()
-    qtbot.waitUntil(lambda: any(isinstance(c, tuple) for c in calls))
-    assert ("DutyCycleOut", {"Output": "0.2"}) in calls
-    w.left_tabs.setCurrentIndex(2)
-    qtbot.waitUntil(lambda: "stop" in calls)
-    assert not w.control_panel.armed
-    assert w.active_control is None
-    count = len(calls)
-    qtbot.wait(180)
-    assert len(calls) == count
-    w.close()
-
-
-def test_stalled_control_request_stops_and_requires_rearming(qtbot):
-    import time
-
-    from panther_tuner.models import Device
-
-    w = MainWindow()
-    qtbot.addWidget(w)
-    calls = []
-
-    class Backend:
-        def assert_target(self, device):
-            pass
-
-        def control(self, *args, **kwargs):
-            calls.append("request")
-            time.sleep(0.4)
-
-        def stop_control(self, device):
-            calls.append("stop")
-
-        def close(self):
-            pass
-
-    w.backend = Backend()
-    w.device = Device("Talon FX vers. C", 1, "", "Test", "26.3.0")
-    w.discovery_timer.stop()
-    w.poll_timer.stop()
-    w.control_panel.set_catalog({"NeutralOut": {"ConstructorParams": []}})
-    w.navigate(1)
-    w.left_tabs.setCurrentIndex(1)
-    w.confirm = lambda *_: True
-    w.arm_controls()
-    qtbot.waitUntil(lambda: w.control_panel.armed)
-    w.apply_control()
-    qtbot.waitUntil(lambda: not w.control_panel.armed)
-    qtbot.waitUntil(lambda: "stop" in calls)
-    qtbot.wait(200)
-    assert calls == ["request", "stop"]
-    assert "stalled" in w.control_panel.note.text()
-    assert w.active_control is None
-    w.close()
-
-
 class RecordingControlBackend:
     """Records control traffic with arrival times; no HTTP channel of its own."""
 
@@ -209,27 +107,31 @@ class RecordingControlBackend:
         self.calls = []
         self.lock = threading.Lock()
 
+    def record(self, kind, values=None):
+        import time
+
+        with self.lock:
+            self.calls.append((time.monotonic(), kind, dict(values or {})))
+
+    def kinds(self):
+        with self.lock:
+            return [kind for _, kind, _ in self.calls]
+
     def assert_target(self, device):
-        pass
+        self.record("verify")
 
     def control(self, device, mode, values, *, confirmed=False):
-        import time
-
         assert confirmed
-        with self.lock:
-            self.calls.append((time.monotonic(), mode, values.copy()))
+        self.record(mode, values)
 
     def stop_control(self, device):
-        import time
-
-        with self.lock:
-            self.calls.append((time.monotonic(), "stop", {}))
+        self.record("stop")
 
     def close(self):
         pass
 
 
-def applied_window(qtbot, backend):
+def control_window(qtbot, backend):
     from panther_tuner.models import Device
 
     w = MainWindow()
@@ -248,11 +150,86 @@ def applied_window(qtbot, backend):
     w.navigate(1)
     w.left_tabs.setCurrentIndex(1)
     w.control_panel.editors["Output"].setText("0.2")
-    w.confirm = lambda *_: True
-    w.arm_controls()
-    qtbot.waitUntil(lambda: w.control_panel.armed)
-    w.apply_control()
     return w
+
+
+def enabled_window(qtbot, backend):
+    w = control_window(qtbot, backend)
+    w.control_panel.enable_button.click()
+    qtbot.waitUntil(lambda: "DutyCycleOut" in backend.kinds())
+    return w
+
+
+def test_enable_toggle_sends_continuously_applies_edits_live_and_disables(qtbot):
+    backend = RecordingControlBackend()
+    w = control_window(qtbot, backend)
+    panel = w.control_panel
+    assert panel.enable_button.text() == "DISABLED"
+    assert panel.enable_button.objectName() == "disabled"
+    panel.editors["Output"].setText("0.3")
+    panel.editors["Output"].editingFinished.emit()
+    qtbot.wait(100)
+    assert not backend.calls  # Editing while disabled sends nothing.
+    panel.enable_button.click()
+    assert panel.output_enabled
+    assert panel.enable_button.text() == "ENABLED"
+    assert panel.enable_button.objectName() == "enabled"
+    qtbot.waitUntil(lambda: backend.kinds().count("DutyCycleOut") >= 5)
+    assert backend.kinds()[0] == "verify"
+    assert backend.calls[1][2] == {"Output": "0.3"}
+    panel.editors["Output"].setText("-0.4")
+    panel.editors["Output"].editingFinished.emit()
+    qtbot.waitUntil(lambda: backend.calls[-1][2] == {"Output": "-0.4"})
+    # Selecting plot signals keeps control enabled, unlike leaving the device.
+    w.left_tabs.setCurrentIndex(2)
+    qtbot.wait(150)
+    assert panel.output_enabled
+    panel.enable_button.click()
+    assert not panel.output_enabled
+    assert panel.enable_button.text() == "DISABLED"
+    qtbot.waitUntil(lambda: not w.heartbeats)
+    count = len(backend.calls)
+    qtbot.wait(150)
+    assert len(backend.calls) == count
+    assert backend.kinds()[-1] == "stop"
+    assert backend.kinds().count("stop") == 1
+    w.close()
+
+
+def test_leaving_the_device_disables_control(qtbot):
+    backend = RecordingControlBackend()
+    w = enabled_window(qtbot, backend)
+    w.navigate(0)
+    assert not w.control_panel.output_enabled
+    assert w.active_control is None
+    qtbot.waitUntil(lambda: backend.kinds()[-1] == "stop")
+    w.close()
+
+
+def test_slow_and_failed_requests_retry_without_disabling(qtbot):
+    import time
+
+    from panther_tuner.models import TunerError
+
+    class FlakyBackend(RecordingControlBackend):
+        def control(self, *args, **kwargs):
+            attempt = self.kinds().count("attempt")
+            self.record("attempt")
+            if attempt == 1:
+                time.sleep(0.4)
+            elif attempt in (2, 3, 4):
+                raise TunerError("controlv2: timed out")
+            super().control(*args, **kwargs)
+
+    backend = FlakyBackend()
+    w = enabled_window(qtbot, backend)
+    qtbot.waitUntil(lambda: "retrying" in w.control_panel.note.text())
+    assert w.control_panel.output_enabled
+    qtbot.waitUntil(lambda: w.control_panel.note.text() == "Sending DutyCycleOut")
+    assert "resumed after" in w.log.toPlainText()
+    assert w.control_panel.output_enabled
+    w.close()
+    assert backend.kinds()[-1] == "stop"
 
 
 def test_control_heartbeat_does_not_wait_behind_other_io(qtbot):
@@ -262,48 +239,44 @@ def test_control_heartbeat_does_not_wait_behind_other_io(qtbot):
     from panther_tuner.ui.heartbeat import HOLD
 
     backend = RecordingControlBackend()
-    w = applied_window(qtbot, backend)
-    qtbot.waitUntil(lambda: bool(backend.calls))
+    w = enabled_window(qtbot, backend)
     # A slow telemetry/discovery request occupies the ordered I/O worker.
     w.worker.submit(lambda: time.sleep(0.8), lambda *_: None)
     qtbot.wait(800)
-    assert w.control_panel.armed
-    times = [t for t, mode, _ in backend.calls if mode == "DutyCycleOut"]
+    assert w.control_panel.output_enabled
+    times = [t for t, kind, _ in backend.calls if kind == "DutyCycleOut"]
     assert len(times) >= 12
     assert max(b - a for a, b in zip(times, times[1:])) < HOLD
-    w.stop_controls()
-    qtbot.waitUntil(lambda: backend.calls[-1][1] == "stop")
     w.close()
 
 
-def test_reapply_updates_running_heartbeat_and_stop_is_last(qtbot):
+def test_gui_stall_pauses_requests_until_the_gui_responds(qtbot):
     backend = RecordingControlBackend()
-    w = applied_window(qtbot, backend)
-    heartbeat = w.active_control
-    qtbot.waitUntil(lambda: bool(backend.calls))
-    w.control_panel.editors["Output"].setText("-0.3")
-    w.apply_control()
-    assert w.active_control is heartbeat
-    qtbot.waitUntil(lambda: backend.calls[-1][2] == {"Output": "-0.3"})
-    w.control_panel.stop_requested.emit()
-    assert not w.control_panel.armed
-    qtbot.waitUntil(lambda: heartbeat.isFinished())
-    count = len(backend.calls)
-    qtbot.wait(150)
-    assert len(backend.calls) == count
-    assert backend.calls[-1][1] == "stop"
-    assert [c[1] for c in backend.calls].count("stop") == 1
-    w.close()
-
-
-def test_gui_stall_ends_heartbeat_and_requires_rearming(qtbot):
-    backend = RecordingControlBackend()
-    w = applied_window(qtbot, backend)
+    w = enabled_window(qtbot, backend)
     w.control_timer.stop()  # The GUI stops feeding its liveness deadline.
-    qtbot.waitUntil(lambda: not w.control_panel.armed, timeout=2000)
-    assert "GUI heartbeat stalled" in w.control_panel.note.text()
-    assert backend.calls[-1][1] == "stop"
-    assert w.active_control is None
+    qtbot.waitUntil(lambda: "not responding" in w.control_panel.note.text(), timeout=3000)
+    count = backend.kinds().count("DutyCycleOut")
+    qtbot.wait(200)
+    assert backend.kinds().count("DutyCycleOut") == count
+    assert w.control_panel.output_enabled
+    w.control_timer.start()
+    qtbot.waitUntil(lambda: backend.kinds().count("DutyCycleOut") > count + 3)
+    w.close()
+
+
+def test_missing_target_cannot_be_enabled(qtbot):
+    from panther_tuner.models import TunerError
+
+    class MissingBackend(RecordingControlBackend):
+        def assert_target(self, device):
+            raise TunerError("Device is missing, replaced, or has a duplicate ID")
+
+    backend = MissingBackend()
+    w = control_window(qtbot, backend)
+    w.control_panel.enable_button.click()
+    qtbot.waitUntil(lambda: not w.control_panel.output_enabled)
+    assert "missing" in w.control_panel.note.text()
+    assert "DutyCycleOut" not in backend.kinds()
     w.close()
 
 
@@ -313,19 +286,19 @@ def test_control_lapse_is_reported(qtbot):
     class SlowBackend(RecordingControlBackend):
         def control(self, *args, **kwargs):
             super().control(*args, **kwargs)
-            if len(self.calls) == 2:
+            if self.kinds().count("DutyCycleOut") == 2:
                 time.sleep(0.22)
 
     backend = SlowBackend()
-    w = applied_window(qtbot, backend)
-    qtbot.waitUntil(lambda: "reclaimed" in w.control_panel.note.text())
-    assert w.control_panel.armed
+    w = enabled_window(qtbot, backend)
+    qtbot.waitUntil(lambda: "gap" in w.log.toPlainText())
+    assert w.control_panel.output_enabled
     w.close()
-    assert backend.calls[-1][1] == "stop"
+    assert backend.kinds()[-1] == "stop"
 
 
 @pytest.mark.integration
-def test_window_applies_and_stops_actual_vendor_simulated_output(qtbot, simulation):
+def test_window_enables_edits_and_disables_actual_vendor_simulated_output(qtbot, simulation):
     w = MainWindow()
     qtbot.addWidget(w)
     device = next(d for d in simulation.discover() if d.id == 1)
@@ -347,15 +320,14 @@ def test_window_applies_and_stops_actual_vendor_simulated_output(qtbot, simulati
             return simulation.sample(device, [duty_id]).values[duty_id]
 
         assert duty() == 0
-        w.confirm = lambda *_: True
-        w.arm_controls()
-        qtbot.waitUntil(lambda: w.control_panel.armed)
-        assert duty() == 0  # Arming alone must not activate output.
-        w.apply_control()
+        w.control_panel.enable_button.click()
         qtbot.waitUntil(lambda: 0.08 < duty() < 0.12, timeout=2000)
-        w.control_panel.stop_requested.emit()
+        w.control_panel.editors["Output"].setText("0.2")
+        w.control_panel.editors["Output"].editingFinished.emit()
+        qtbot.waitUntil(lambda: 0.18 < duty() < 0.22, timeout=2000)
+        w.control_panel.enable_button.click()
         qtbot.waitUntil(lambda: duty() == 0, timeout=2000)
-        assert not w.control_panel.armed
+        assert not w.control_panel.output_enabled
     finally:
         w.stop_controls()
         simulation.enable_lease(False)

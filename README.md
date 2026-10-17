@@ -23,7 +23,7 @@ Discover devices, inspect diagnostics, capture buffered telemetry, edit configur
 | **Diagnostics** | Self-test snapshots, reported faults and metrics, JSON copying, and confirmed blink/fault clearing. |
 | **Buffered plotting** | Multiple signals with independent axes, server timestamps, overlapping-buffer deduplication, overrun detection, pause, zoom, and CSV export. |
 | **Configuration** | Every parameter returned by the server, with units, validation, descriptions, import/export, staged defaults, reviewed writes, and readback. |
-| **Control requests** | Device-advertised request types and parameters, explicit Enable → Apply, Stop, and request/enable watchdogs. |
+| **Control requests** | Device-advertised request types and parameters, a Tuner X-style ENABLED/DISABLED toggle with live edits, and request/enable watchdogs. |
 | **Vendor simulation** | An isolated official CTRE SDK process with clearly labeled synthetic sensor inputs. No physical CAN is used. |
 
 Supported Phoenix 6 families: **Talon FX, Talon FXS, CANcoder, Pigeon 2, CANrange, CANdi, and CANdle**, as exposed by the connected Diagnostics Server.
@@ -97,7 +97,7 @@ A roboRIO needs a robot program that starts Phoenix Diagnostics, usually by inst
 
 ## Operational limits
 
-**Controls can activate motors.** Secure the mechanism and keep an independent emergency stop available. Enabling the editor requires confirmation; output starts only after Apply. Stop, leaving Control, device changes, disconnects, errors, and stalled heartbeats disarm the session. FRC still requires Driver Station enable. See [control and enable behavior](docs/protocol.md#control-requests) before using hardware.
+**Controls can activate motors.** Secure the mechanism and keep an independent emergency stop available. Like Tuner X, the Control tab has one ENABLED/DISABLED toggle: while enabled, the request is sent continuously and edits apply immediately. Disabling, leaving the device, device changes and disconnects neutralize output. FRC still requires Driver Station enable. See [control and enable behavior](docs/protocol.md#control-requests) before using hardware.
 
 **Buffered does not mean unlimited.** Every returned server record is preserved without client decimation, but a finite server buffer can overrun. Missing ordinals are counted and shown as gaps. This does not guarantee every physical CAN update. Capture storage is temporary: export before Clear, changing devices, disconnecting, or closing.
 

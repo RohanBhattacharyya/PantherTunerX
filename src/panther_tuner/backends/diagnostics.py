@@ -15,7 +15,7 @@ from ..controls import encode_control
 from ..models import Device, DeviceError, PlotBatch, Sample, Signal, TunerError
 from ..protocol import checked_response, encode_payload
 
-CONTROL_TIMEOUT = 0.25
+CONTROL_TIMEOUT = 0.5
 
 
 class DiagnosticsBackend:
